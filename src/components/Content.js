@@ -35,6 +35,7 @@ export default function Content(props) {
             <div className="g1"><Header changeIntro={props.changeIntro} /></div>
             <div className="g2"><Menu /></div>
             <div className="content">
+                <h2 className="content-title">Fruits</h2>
                 <div className="products">
                     <div className="product">
                         <img className="product-thumb" src={require(`../img/products/fruits/bananas.jpg`)} />
@@ -43,9 +44,42 @@ export default function Content(props) {
                         <span className="product-price">199€</span>
                         <span className="product-stock">33</span>
                     </div>
+                    <div className="product">
+                        <img className="product-thumb" src={require(`../img/products/fruits/apples.jpg`)} />
+                        {/* <ImageGallery items={images} showThumbnails={false} /> */}
+                        <span className="product-title">One apple a day scares doctors away.</span>
+                        <span className="product-price">11.49€</span>
+                        <span className="product-stock">1294</span>
+                    </div>
+                    <div className="product">
+                        <img className="product-thumb" src={require(`../img/products/fruits/guava.jpg`)} />
+                        {/* <ImageGallery items={images} showThumbnails={false} /> */}
+                        <span className="product-title">Kinda short title.</span>
+                        <span className="product-price">1.99€</span>
+                        <span className="product-stock">3</span>
+                    </div>
+                    <div className="product">
+                        <img className="product-thumb" src={require(`../img/products/fruits/avocados.jpg`)} />
+                        {/* <ImageGallery items={images} showThumbnails={false} /> */}
+                        <span className="product-title">Kinda long title with many stuff probably couple of lines with all nonsensical stuff which is totally unnecessary and ridiculous but what can we do. Life is life and adios..</span>
+                        <span className="product-price">13459.99€</span>
+                        <span className="product-stock">3</span>
+                    </div>
+                    <div className="product">
+                        <img className="product-thumb" src={require(`../img/products/fruits/lemons.jpg`)} />
+                        {/* <ImageGallery items={images} showThumbnails={false} /> */}
+                        <span className="product-title"></span>
+                        <span className="product-price">459.00€</span>
+                        <span className="product-stock">3</span>
+                    </div>
+                    <div className="product">
+                        <img className="product-thumb" src={require(`../img/products/fruits/pineapple.jpg`)} />
+                        {/* <ImageGallery items={images} showThumbnails={false} /> */}
+                        <span className="product-title">Normal title</span>
+                        <span className="product-price">1459.99€</span>
+                        <span className="product-stock">3</span>
+                    </div>
                 </div>
-
-                main content
             </div>
             <div className="g3"><Footer /></div>
         </div>
