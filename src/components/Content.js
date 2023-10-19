@@ -1,10 +1,31 @@
+import React from "react";
 import Header from "./Header"
 import Footer from "./Footer"
 import Menu from "./Menu"
+import ContentCart from "./ContentCart";
+import { 
+    collection,
+    onSnapshot, 
+    addDoc, //adds collection to db
+    doc, //reference to specific item
+    deleteDoc, //delete db item
+    setDoc, //updates db item
+    query, //db query
+    where, //where statement for query
+    getDocs //returns docs with given query
+  } from "firebase/firestore"
+import { db } from "../firebase"
 import ImageGallery from "react-image-gallery";
 
 export default function Content(props) {
-    const images = [
+    const [categories, setCategories] = React.useState([])
+    const [products, setProducts] = React.useState([])
+    const [currentPage, setCurrentPage] = React.useState()
+    const [currentCat, setCurrentCat] = React.useState()
+
+    //console.log(currentCat)
+
+    /* const images = [
         {
           original: "https://picsum.photos/id/1018/1000/600/",
           thumbnail: "https://picsum.photos/id/1018/250/150/",
@@ -29,22 +50,57 @@ export default function Content(props) {
           originalHeight: "200px",
           originalWidth: "200px",
         },
-    ];
+    ]; */
+
+    React.useEffect(() => {
+        const unsubscribe = onSnapshot(collection(db, "sws-categories"), function(snapshot) {         
+            const nArr = snapshot.docs.map(doc => ({
+                ...doc.data(),
+                uid: doc.id
+            }))
+            setCategories(nArr)                     
+        })       
+        return unsubscribe
+    }, [])
+
+    //db query for products of selected category
+    React.useEffect(() => { //here's field name from db and value (1)
+        const q = query(collection(db, "sws-products"), where("category-id", "==", 1)); 
+        //const q = collection(db, "sws-products")
+        const getAll = async() => { 
+            try {
+                const querySnapshot = await getDocs(q)
+                const nArr = querySnapshot.docs.map(doc => ({
+                    ...doc.data(),
+                    uid: doc.id
+                }))
+                setProducts(nArr)
+            } catch (err) {
+                console.log("ERROR!: " + err)        
+            }
+        }
+        getAll()    
+    }, [])
+
+    function catChange(id) {
+        //console.log("clicked: " + id)
+        setCurrentCat(id)
+    }
+    
     return (
         <>
             <div className="main">
-                <Menu />
+                <Menu                    
+                    categories={categories}
+                    products={products}
+                    currentCat={currentCat}
+                    selectCat={catChange}
+                    currentPage={currentPage}
+                />
                 <div className="g1">
                     <Header changeIntro={props.changeIntro} />            
                     <div className="content">
-                        <div className="content-cart">
-                            <p>Items in you cart: <span className="content-cart-numberofitems">3</span></p>
-                            <p>Total: <span className="content-cart-total">199.46€</span></p>
-                            <div className="content-cart-footer">
-                                <span className="content-cart-char">🛒</span>
-                                <button className="content-cart-view">view cart</button>
-                            </div>
-                        </div>
+                        <ContentCart />
                         <div className="content-title">Fruits</div>
                         <div className="products">
                             <div className="product">

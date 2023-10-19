@@ -1,25 +1,31 @@
-export default function Menu() {
+export default function Menu(props) {
+    const sortedCats = props.categories.sort(function(a, b){return a.id - b.id});
+    //console.log(sortedCats)
+
+    const cats = sortedCats.map(cat => {
+        return ( 
+            <li
+               key={cat.uid} 
+               onClick={() => props.selectCat(cat.id)}
+               className={props.currentCat===cat.id?"selected":"" }
+            >{cat.title}</li>
+        )
+    })        
+
+
     return (
         <div className="menu">
-            {/* <ul>
-                <li>Home</li>
-                <li>Categories</li>
-                <ul>
-                    <li>sub1</li>
-                    <li>sub2</li>
-                    <li>sub3</li>
-                </ul>
-                <li>Contacts</li>
-                <li>User</li>
-            </ul> */}
+          
             <p>Home</p>
-            <p>Categories ⯆</p>
+            <p>Categories{ props.categories?.length>0 && ' ⯆'}</p>
             <ul>
-                <li className="selected">sub1</li>
+                {cats}
+                {/* <li className="selected">sub1</li>
                 <li>Long name from 3 words</li>
-                <li>sub3</li>
+                <li>sub3</li> */}
             </ul>            
             <p className="selected">Contacts</p>
+            <p>About</p>
             <p>User ⯆</p> {/* only show when signed-in otherwise show Sign-in */}
             <ul>
                 <li>Info</li>
