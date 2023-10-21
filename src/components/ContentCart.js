@@ -5,7 +5,7 @@ export default function ContentCart() {
             <p>Total: <span className="content-cart-total">199.46€</span></p>
             <div className="content-cart-footer">
                 <span className="content-cart-char">🛒</span>
-                <button className="content-cart-view">view cart</button>
+                <button className="btn">view cart</button>
             </div>
         </div>
     )

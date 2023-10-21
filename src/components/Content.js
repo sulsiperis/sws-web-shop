@@ -3,6 +3,7 @@ import Header from "./Header"
 import Footer from "./Footer"
 import Menu from "./Menu"
 import ContentCart from "./ContentCart";
+import Products from "./Products";
 import { 
     collection,
     onSnapshot, 
@@ -19,11 +20,15 @@ import ImageGallery from "react-image-gallery";
 
 export default function Content(props) {
     const [categories, setCategories] = React.useState([])
-    const [products, setProducts] = React.useState([])
+    const [productsItems, setProductsItems] = React.useState([])
     const [currentPage, setCurrentPage] = React.useState()
     const [currentCat, setCurrentCat] = React.useState()
+    //temporary solution for showing individual product
+    const [prodId, setProdId] = React.useState()
+    const [showCart, setShowCart] = React.useState(true)
+    const [toggleMenu, setToggleMenu] = React.useState(true)
 
-    //console.log(currentCat)
+    console.log(productsItems)
 
     /* const images = [
         {
@@ -62,10 +67,10 @@ export default function Content(props) {
         })       
         return unsubscribe
     }, [])
-
+    
     //db query for products of selected category
     React.useEffect(() => { //here's field name from db and value (1)
-        const q = query(collection(db, "sws-products"), where("category-id", "==", 1)); 
+        if (currentCat) {const q = query(collection(db, "sws-products"), where("category-id", "==", currentCat)); 
         //const q = collection(db, "sws-products")
         const getAll = async() => { 
             try {
@@ -74,83 +79,45 @@ export default function Content(props) {
                     ...doc.data(),
                     uid: doc.id
                 }))
-                setProducts(nArr)
+                setProductsItems(nArr)
             } catch (err) {
                 console.log("ERROR!: " + err)        
             }
         }
-        getAll()    
-    }, [])
+        getAll()}
+    }, [currentCat])
 
     function catChange(id) {
         //console.log("clicked: " + id)
         setCurrentCat(id)
     }
-    
+    function menuShowHide() {
+        setToggleMenu(oldVal => !oldVal)
+    }
     return (
-        <>
+        <div className="main-wrapper">
             <div className="main">
-                <Menu                    
+                {toggleMenu && <Menu                    
                     categories={categories}
-                    products={products}
+                    products={productsItems}
                     currentCat={currentCat}
                     selectCat={catChange}
                     currentPage={currentPage}
-                />
+                />}
                 <div className="g1">
-                    <Header changeIntro={props.changeIntro} />            
+                    <Header 
+                        changeIntro={props.changeIntro}
+                        menuShowHide={menuShowHide} 
+                    />            
                     <div className="content">
-                        <ContentCart />
+                        {showCart && <ContentCart />}
                         <div className="content-title">Fruits</div>
-                        <div className="products">
-                            <div className="product">
-                                <img className="product-thumb" src={require(`../img/products/fruits/bananas.jpg`)} />
-                                {/* <ImageGallery items={images} showThumbnails={false} /> */}
-                                <span className="product-title">Title for the product could be quite longish or not who knows.</span>
-                                <span className="product-price">199€</span>
-                                <span className="product-stock">33</span>
-                            </div>
-                            <div className="product">
-                                <img className="product-thumb" src={require(`../img/products/fruits/apples.jpg`)} />
-                                {/* <ImageGallery items={images} showThumbnails={false} /> */}
-                                <span className="product-title">One apple a day scares the doctors away.</span>
-                                <span className="product-price">11.49€</span>
-                                <span className="product-stock">1294</span>
-                            </div>
-                            <div className="product">
-                                <img className="product-thumb" src={require(`../img/products/fruits/guava.jpg`)} />
-                                {/* <ImageGallery items={images} showThumbnails={false} /> */}
-                                <span className="product-title">Kinda short title.</span>
-                                <span className="product-price">1.99€</span>
-                                <span className="product-stock">3</span>
-                            </div>
-                            <div className="product">
-                                <img className="product-thumb" src={require(`../img/products/fruits/avocados.jpg`)} />
-                                {/* <ImageGallery items={images} showThumbnails={false} /> */}
-                                <span className="product-title">Kinda long title with many stuff probably couple of lines with all nonsensical stuff which is totally unnecessary and ridiculous but what can we do. Life is life and adios..</span>
-                                <span className="product-price">13459.99€</span>
-                                <span className="product-stock">3</span>
-                            </div>
-                            <div className="product">
-                                <img className="product-thumb" src={require(`../img/products/fruits/lemons.jpg`)} />
-                                {/* <ImageGallery items={images} showThumbnails={false} /> */}
-                                <span className="product-title"></span>
-                                <span className="product-price">459.00€</span>
-                                <span className="product-stock">3</span>
-                            </div>
-                            <div className="product">
-                                <img className="product-thumb" src={require(`../img/products/fruits/pineapple.jpg`)} />
-                                {/* <ImageGallery items={images} showThumbnails={false} /> */}
-                                <span className="product-title">Normal title</span>
-                                <span className="product-price">1459.99€</span>
-                                <span className="product-stock">3</span>
-                            </div>
-                        </div>
+                        <Products items={productsItems} />
                     </div>
                 </div>
             </div>
             <Footer />
-        </>
+        </div>
     )
     
 }
