@@ -43,9 +43,13 @@ export default function Products(props) {
                 />
                 {/* <ImageGallery items={images} showThumbnails={false} /> */}
                 <span className="product-title">{prod.title}</span>
-                <span className="product-price">{prod.price}€</span>
-                <span className="product-stock">{prod.stock}</span>
-                <button className="btn" onClick={() => addToCart(prod.uid)}>Add to cart</button>
+                <div className="product-info-wrapper">
+                    
+                        <span className="product-price">{prod.price}€</span>
+                        <span className="product-stock">{prod.stock}</span>
+                        <button className="btn" onClick={() => addToCart(prod.uid)}>Add to cart</button>
+
+                </div>
             </div>
         )
     })

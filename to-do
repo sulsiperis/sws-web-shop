@@ -4,17 +4,13 @@
 4. firestore design for pages and content
 5. content editor
 6. move content-cart to separate component +
-7. menu toggle function
+7. menu toggle function +
 8. fix the content+menu 100% height when low content
 9. update DB quantity only when purchase button pressed
+10. Fix the cart notifier design for small screens
 
 n. User auth
 
-"pages" db:
-type-id, title, order, content, parent-id, options
-
-"page-types" db
-type-id, title, options
 
 ---------------
 localStorage:

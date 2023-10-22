@@ -266,19 +266,27 @@ body {
   cursor: pointer;
 }
 .product-price {
-  font-size: 20px;
+
+  font-size: 21px;
   font-weight: 200;
   letter-spacing: 1px;
-  margin: 0px 6px 0px 6px;
+  margin: 0px 4px 0px 6px;
   cursor: pointer;
 }
 .product-stock {
-  font-size: 12px;
-  font-weight: 200;
+  font-size: 11px;
+  font-weight: 400;
   border-radius: 4px;
   border: 1px solid #000;
   cursor: pointer;
   padding: 2px;
-  margin-right: 12px;
+  margin-right: 6px;
+  height: 20px;
+  color: #2a692a;
 }
-
+.product-info-wrapper {  
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}

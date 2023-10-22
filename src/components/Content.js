@@ -99,16 +99,12 @@ export default function Content(props) {
     }, [cartContent])
 
     async function findDbPrice(itemId) {
+        // __name__ is the document id identifier
         const q = query(collection(db, "sws-products"), where("__name__", "==", itemId))
-       
-        let price=0
-         
             try {
                 const querySnapshot = await getDocs(q)
-
                 return querySnapshot.docs[0].data().price 
-                
-            } catch (err) {                
+              } catch (err) {                
                 console.log("ERROR!: " + err)        
                 return false
             }
