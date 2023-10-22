@@ -6,6 +6,7 @@
 6. move content-cart to separate component +
 7. menu toggle function
 8. fix the content+menu 100% height when low content
+9. update DB quantity only when purchase button pressed
 
 n. User auth
 
@@ -14,3 +15,8 @@ type-id, title, order, content, parent-id, options
 
 "page-types" db
 type-id, title, options
+
+---------------
+localStorage:
+
+cart[{"itemid": "31r2r24r24wdvsdc", "quantity": 3}, {"itemid": "sssf333", "quantity": 1}, {"itemid": "383838383838", "quantity": 66666}]

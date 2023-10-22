@@ -222,11 +222,14 @@ body {
   box-shadow: 
     0px 0px 6px 1px rgba(253, 243, 185, 1)
   ;
-  
+  white-space: nowrap;
   
 }
-.btn:hover, .btn:active {
+.btn:hover {
   border: 1px dotted #000;
+}
+.btn:active {
+  border: 2px solid #000;
 }
 .content-cart-numberofitems {
   font-weight: 600;  
