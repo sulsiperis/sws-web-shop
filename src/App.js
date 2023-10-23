@@ -17,7 +17,9 @@ import { db } from "./firebase"
 
 function App() {
   const [intro, setIntro] = React.useState("true")
- 
+  
+
+
   function switchIntro() {
       setIntro(oldval => {
         return !oldval

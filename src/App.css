@@ -8,8 +8,8 @@
 body {
   padding: 0;
   margin: 0;
-  background: rgb(197,185,18);
-  background: linear-gradient(90deg, rgba(197,185,18,1) 0%, rgba(253,252,179,1) 100%); 
+  background: rgb(173, 180, 131);
+ /*  background: linear-gradient(90deg, rgba(197,185,18,1) 0%, rgba(253,252,179,1) 100%);  */
   /* background:
     radial-gradient(
       circle at top left, 
@@ -31,10 +31,11 @@ body {
 }
 .main-wrapper {
   height: 100vh;
-
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  
 }
 .main {  
   display: flex;
@@ -42,6 +43,8 @@ body {
 }
 .g1 {
   width: 100%;
+  min-height: calc(100vh - 24px);
+  background: rgb(173, 180, 131);
 }
 
 /********** footer *********/
@@ -52,24 +55,26 @@ body {
   font-size: 11px;
   border-top: 2px solid #fff;
   height: 24px;
-
+  background: rgb(207, 206, 112);
 
 }
 /********** header *********/
 .header {
   display: grid;
-  grid-template-columns: 32px 100px 1fr 33px 33px;
+  grid-template-columns: 30px 108px 1fr 33px 33px;
   align-items: center;
+  background: rgb(207, 206, 112);
  
 }
 .logo {
   height: 40px;  
   cursor: pointer;
-  padding-left: 12px; 
+  padding-left: 6px; 
+  
 }
 .header-title {
   display: flex;
-  font-size: 24px;
+  font-size: 4vw;
   font-weight: 800;
   margin-left: 12px;
   margin-right: 12px;
@@ -135,7 +140,7 @@ body {
   padding: 4px;
   font-size: 18px;
   border-right: 2px solid #fff;
-
+  background: rgb(207, 206, 112);
 
 }
 .selected {
@@ -166,7 +171,7 @@ body {
 
 /********** content *********/
 .content {   
- 
+  
   border-top: 2px solid #fff;
   padding-bottom: 12px;
   
@@ -206,6 +211,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: end;
+  
 }
 .content-cart-char {
   font-size: 28px;
@@ -255,7 +261,8 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-bottom: 2px solid #f5f0b3;
+  /* border-bottom: 2px solid #f5f0b3; */
+  border-bottom: 1px solid #000;
   padding-block: 12px;
   
 }
@@ -282,7 +289,7 @@ body {
   padding: 2px;
   margin-right: 6px;
   height: 20px;
-  color: #2a692a;
+  color: #2e502e;
 }
 .product-info-wrapper {  
   display: flex;

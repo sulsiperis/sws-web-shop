@@ -4,6 +4,7 @@ import Footer from "./Footer"
 import Menu from "./Menu"
 import ContentCart from "./ContentCart";
 import Products from "./Products";
+import LoginSignup from "./LoginSignup";
 import { 
     collection,
     onSnapshot, 
@@ -17,11 +18,14 @@ import {
     FieldPath
   } from "firebase/firestore"
 import { db } from "../firebase"
+import dbQuery from "../functions/dbQuery";
 import ImageGallery from "react-image-gallery";
 
 export default function Content(props) {
     const [categories, setCategories] = React.useState([])
     const [productsItems, setProductsItems] = React.useState([])
+
+    const [pages, setPages] = React.useState([])
     const [currentPage, setCurrentPage] = React.useState()
     const [currentCat, setCurrentCat] = React.useState()
     //temporary solution for showing individual product
@@ -30,6 +34,7 @@ export default function Content(props) {
     const [toggleMenu, setToggleMenu] = React.useState(true)
     const [cartContent, setCartContent] = React.useState(JSON.parse(localStorage.getItem("cart")))
     const [cartTotals, setCartTotals] = React.useState({"cartTotal": 0, "cartItems": 0})
+    const [login, setLogin] = React.useState()
     //console.log(productsItems)
 
     /* const images = [
@@ -70,6 +75,8 @@ export default function Content(props) {
         return unsubscribe
     }, [])
 
+
+
     //db query for products of selected category
     React.useEffect(() => { //here's field name from db and value (1)
         if (currentCat) {
@@ -98,21 +105,36 @@ export default function Content(props) {
         cartDetails()      
     }, [cartContent])
 
+    //pages hook:
+    React.useEffect(() => {
+        //console.log('sss')
+        const fetchData = async () => {
+            const cdata = await dbQuery("sws-pages", db, true)
+            let nArr = []
+            const k = cdata.map(page => {
+                nArr.push(page.data())
+                
+            })
+            console.log(nArr)
+            //console.log(cdata)
+        }
+        fetchData()
+    }, [])
+
     async function findDbPrice(itemId) {
         // __name__ is the document id identifier
         const q = query(collection(db, "sws-products"), where("__name__", "==", itemId))
-            try {
-                const querySnapshot = await getDocs(q)
-                return querySnapshot.docs[0].data().price 
-              } catch (err) {                
-                console.log("ERROR!: " + err)        
-                return false
-            }
+        try {
+            const querySnapshot = await getDocs(q)
+            return querySnapshot.docs[0].data().price 
+            } catch (err) {                
+            console.log("ERROR!: " + err)        
+            return false
+        }
         
     }
     async function cartDetails() {
         let count = 0, total = 0
-        //let itemIdArr = []
         if (cartContent) {
             for(let i=0;i<cartContent.length;i++) {
                 
@@ -120,13 +142,14 @@ export default function Content(props) {
 
                 count=count + cartContent[i].quantity
                 total = total + (await findDbPrice(cartContent[i].itemId) * cartContent[i].quantity)
-                //itemIdArr.push(cartContent[i].itemId)             
             }
         }
         //toFixed(2) rounds a number and returns 2 digis after dot
         setCartTotals({"cartTotal": total.toFixed(2), "cartItems": count})
     }
     
+
+
     function catChange(id) {
         //console.log("clicked: " + id)
         setCurrentCat(id)
@@ -136,6 +159,15 @@ export default function Content(props) {
     }
     function updateCartContent(content) {
         setCartContent(content)
+    }
+    function loginCheck() {
+      
+            setLogin(oldVal => {
+                let newVal
+                !oldVal?newVal = 'login':newVal = false
+                return newVal
+            })            
+      
     }
     return (
         <div className="main-wrapper">
@@ -150,11 +182,13 @@ export default function Content(props) {
                 <div className="g1">
                     <Header 
                         changeIntro={props.changeIntro}
-                        menuShowHide={menuShowHide} 
+                        menuShowHide={menuShowHide}
+                        login={loginCheck}
                     />            
                     <div className="content">
                         {showCart && <ContentCart updateCart={updateCartContent} cartDetails={cartTotals} />}
                         <div className="content-title">Fruits</div>
+                        {login==="login"&&<LoginSignup />}
                         <Products items={productsItems} updateCart={updateCartContent} />
                     </div>
                 </div>
