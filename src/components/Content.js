@@ -80,7 +80,7 @@ export default function Content(props) {
     //db query for products of selected category
     React.useEffect(() => { //here's field name from db and value (1)
         if (currentCat) {
-            const q = query(collection(db, "sws-products"), where("category-id", "==", currentCat))
+            const q = query(collection(db, "sws-products"), where("category_id", "==", currentCat))
             //const q = collection(db, "sws-products")
             const getAll = async() => { 
                 try {
@@ -107,19 +107,57 @@ export default function Content(props) {
 
     //pages hook:
     React.useEffect(() => {
-        //console.log('sss')
         const fetchData = async () => {
             const cdata = await dbQuery("sws-pages", db, true)
-            let nArr = []
+
+
+            //console.log(cdata)
+
+
+            const nArr = cdata && cdata.map(pg => ({
+                ...pg.data(),
+                uid: pg.id
+            }))
+            /* let nArr = []
             const k = cdata.map(page => {
                 nArr.push(page.data())
                 
-            })
-            console.log(nArr)
-            //console.log(cdata)
+            }) */
+            //console.log(nArr)
+            
+            //const orderedPages = hierarchy(nArr)
+            setPages(nArr)
+           // console.log(nArr)
         }
         fetchData()
     }, [])
+
+    function getChildren(parentId) {        
+        let leveled = [], newArr = []
+        for(let i=0;i<pages.length;i++) {
+            if(pages[i].parent_id === parentId) {
+                newArr.push(pages[i])
+            }
+        }
+        
+        //get rid of hidden pages with type_id===0 
+        //newArr = pages.filter(page => page.type_id > 0)
+        //level 1 hierarchy:
+       /*  for(let i=0;i<newArr.length;i++) {
+            if (newArr[i].parent_id === "") {
+                //level2 hierarchy
+                for(let i2=0;i2<newArr.length;i2++) {
+                    if (newArr[i2].parent_id === newArr[i].uid) {
+
+                    }
+                }
+                leveled.push(newArr[i])
+                
+            }
+            
+        } */
+        return newArr
+    }
 
     async function findDbPrice(itemId) {
         // __name__ is the document id identifier
@@ -154,6 +192,10 @@ export default function Content(props) {
         //console.log("clicked: " + id)
         setCurrentCat(id)
     }
+    function pageChange(id) {
+        //console.log("clicked: " + id)
+        setCurrentPage(id)
+    }
     function menuShowHide() {
         setToggleMenu(oldVal => !oldVal)
     }
@@ -178,6 +220,9 @@ export default function Content(props) {
                     currentCat={currentCat}
                     selectCat={catChange}
                     currentPage={currentPage}
+                    selectPage={pageChange}
+                    pages={pages}
+                    getChildren={getChildren}
                 />}
                 <div className="g1">
                     <Header 

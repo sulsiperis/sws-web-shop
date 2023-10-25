@@ -17,3 +17,7 @@ n. User auth
 localStorage:
 
 cart[{"itemid": "31r2r24r24wdvsdc", "quantity": 3}, {"itemid": "sssf333", "quantity": 1}, {"itemid": "383838383838", "quantity": 66666}]
+
+pages [{"type_id": 1, "paren_id": 1, "title": "about"}, 
+        {"type_id": 2, "paren_id": 2, "title": "gallery"},
+        {"type_id": 100, "paren_id": 1, "title": "user"}]
