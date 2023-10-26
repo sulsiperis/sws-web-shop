@@ -11,11 +11,11 @@ import {
     FieldPath
   } from "firebase/firestore"
 import { db } from "../firebase"
-//where syntax: ['field', 'operator', 'value']
+//whereArr syntax: ['field', 'operator', 'value']
 //all === true means return all documents from given collection. If it's true, where is ignored
 //returns all docs object which can be spread by map() function and each maped value accessed by .data().fieldName
-async function dbQuery(catalog, db, all=false, where) {    
-    const field=where && where[0], operator=where && where[1], value=where && where[2]
+async function dbQuery(catalog, db, all=false, whereArr) {    
+    const field=whereArr && whereArr[0], operator=whereArr && whereArr[1], value=whereArr && whereArr[2]
 
 
 

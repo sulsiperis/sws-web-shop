@@ -22,19 +22,28 @@ import dbQuery from "../functions/dbQuery";
 import ImageGallery from "react-image-gallery";
 
 export default function Content(props) {
-    const [categories, setCategories] = React.useState([])
-    const [productsItems, setProductsItems] = React.useState([])
+    
 
     const [pages, setPages] = React.useState([])
     const [currentPage, setCurrentPage] = React.useState()
+    const [curPageType, setCurPageType] = React.useState(0)
     const [currentCat, setCurrentCat] = React.useState()
-    //temporary solution for showing individual product
-    const [prodId, setProdId] = React.useState()
+    const [productsItems, setProductsItems] = React.useState([])
     const [showCart, setShowCart] = React.useState(true)
     const [toggleMenu, setToggleMenu] = React.useState(true)
     const [cartContent, setCartContent] = React.useState(JSON.parse(localStorage.getItem("cart")))
     const [cartTotals, setCartTotals] = React.useState({"cartTotal": 0, "cartItems": 0})
-    const [login, setLogin] = React.useState()
+    const [login, setLogin] = React.useState(false)
+    
+    const ContentTitle = () => {
+        const curPageArr =  pages.filter(page => page.uid === currentPage)
+        if (curPageArr.length>0) {
+            return curPageArr[0].title
+        } else {
+            return false
+        }
+
+    }
     //console.log(productsItems)
 
     /* const images = [
@@ -64,18 +73,53 @@ export default function Content(props) {
         },
     ]; */
 
-    React.useEffect(() => {
-        const unsubscribe = onSnapshot(collection(db, "sws-categories"), function(snapshot) {         
-            const nArr = snapshot.docs.map(doc => ({
-                ...doc.data(),
-                uid: doc.id
+       //pages hook:
+       React.useEffect(() => {
+        const fetchData = async () => {
+            const cdata = await dbQuery("sws-pages", db, true)
+            const nArr = cdata && cdata.map(pg => ({
+                ...pg.data(),
+                uid: pg.id
             }))
-            setCategories(nArr)                     
-        })       
-        return unsubscribe
+            
+            setPages(nArr)
+           // console.log(nArr)
+        }
+        fetchData()
     }, [])
+    
+ 
 
+    //page type hook
+    React.useEffect(() => {
 
+        //method with checking type directly with db
+        const getTypeDb = async () => {
+            const pType = await getPageType(currentPage)            
+            setCurPageType(pType)          
+        }
+        //getTypeDb()
+        //method with checking type from preloaded state of pages array        
+        const getType = () => {
+            const pType = getPageType(currentPage)            
+            setCurPageType(pType)     
+        }
+        getType()        
+    }, [currentPage])
+
+    //product gallery hook:
+    React.useEffect(() => {
+        //console.log(curPageType)
+        //categories file type        
+        if (curPageType === 200) {
+            const curentPageArr = pages.filter(page => (page.uid === currentPage))
+            //console.log(curentPageArr[0].options.type)
+            curentPageArr[0].options.type === "category" && setCurrentCat(curentPageArr[0].options.category_id)
+        } else {
+            setCurrentCat(false)
+            setProductsItems([])
+        }
+    }, [curPageType, currentPage])
 
     //db query for products of selected category
     React.useEffect(() => { //here's field name from db and value (1)
@@ -105,33 +149,7 @@ export default function Content(props) {
         cartDetails()      
     }, [cartContent])
 
-    //pages hook:
-    React.useEffect(() => {
-        const fetchData = async () => {
-            const cdata = await dbQuery("sws-pages", db, true)
-
-
-            //console.log(cdata)
-
-
-            const nArr = cdata && cdata.map(pg => ({
-                ...pg.data(),
-                uid: pg.id
-            }))
-            /* let nArr = []
-            const k = cdata.map(page => {
-                nArr.push(page.data())
-                
-            }) */
-            //console.log(nArr)
-            
-            //const orderedPages = hierarchy(nArr)
-            setPages(nArr)
-           // console.log(nArr)
-        }
-        fetchData()
-    }, [])
-
+ 
     function getChildren(parentId) {        
         let leveled = [], newArr = []
         for(let i=0;i<pages.length;i++) {
@@ -139,33 +157,17 @@ export default function Content(props) {
                 newArr.push(pages[i])
             }
         }
-        
-        //get rid of hidden pages with type_id===0 
-        //newArr = pages.filter(page => page.type_id > 0)
-        //level 1 hierarchy:
-       /*  for(let i=0;i<newArr.length;i++) {
-            if (newArr[i].parent_id === "") {
-                //level2 hierarchy
-                for(let i2=0;i2<newArr.length;i2++) {
-                    if (newArr[i2].parent_id === newArr[i].uid) {
-
-                    }
-                }
-                leveled.push(newArr[i])
-                
-            }
-            
-        } */
         return newArr
     }
 
+    
     async function findDbPrice(itemId) {
         // __name__ is the document id identifier
         const q = query(collection(db, "sws-products"), where("__name__", "==", itemId))
         try {
             const querySnapshot = await getDocs(q)
             return querySnapshot.docs[0].data().price 
-            } catch (err) {                
+        } catch (err) {                
             console.log("ERROR!: " + err)        
             return false
         }
@@ -186,12 +188,9 @@ export default function Content(props) {
         setCartTotals({"cartTotal": total.toFixed(2), "cartItems": count})
     }
     
+    
 
 
-    function catChange(id) {
-        //console.log("clicked: " + id)
-        setCurrentCat(id)
-    }
     function pageChange(id) {
         //console.log("clicked: " + id)
         setCurrentPage(id)
@@ -202,23 +201,64 @@ export default function Content(props) {
     function updateCartContent(content) {
         setCartContent(content)
     }
-    function loginCheck() {
-      
-            setLogin(oldVal => {
-                let newVal
-                !oldVal?newVal = 'login':newVal = false
-                return newVal
-            })            
+
+
+    async function getPageTypeFromDb(id) {
+        if (id) {
+            const qData = await dbQuery("sws-pages", db, false, ["__name__", "==", id])
+            //console.log(await qData[0].data().type_id)
+            return qData[0].data().type_id
+        } else {
+            return false
+        }
+    }
+    function getPageType(id) {
+        if (id) {
+            const qData = pages.filter(page => (page.uid === id))
+            //console.log(qData[0].type_id)
+            return qData[0].type_id
+        } else {
+            return false
+        }
+    }
+    async function getPagesOfTypeFromDb(typeId) {
+        if (typeId) {
+            const qData = await dbQuery("sws-pages", db, false, ["type_id", "==", typeId])
+            return qData
+        } else {
+            return false
+        }
+    }
+    function getPagesOfType(typeId) {
+        if (typeId) {
+            const qData = pages.filter(page => (page.type_id === typeId))
+            return qData
+        } else {
+            return false
+        }
+    }
+
+    
+    async function loginCheck() {
+        
+
+        //console.log(curPageType)
+        const pages = getPagesOfType(999999)
+            if (login) {
+                //whe n user logged in
+                //probably get page by type_id and setCurrentPage to user
+            } else {
+                //console.log( pages[0].uid )
+                setCurrentPage(pages[0].uid)
+            }
       
     }
     return (
         <div className="main-wrapper">
             <div className="main">
                 {toggleMenu && <Menu                    
-                    categories={categories}
                     products={productsItems}
                     currentCat={currentCat}
-                    selectCat={catChange}
                     currentPage={currentPage}
                     selectPage={pageChange}
                     pages={pages}
@@ -232,8 +272,9 @@ export default function Content(props) {
                     />            
                     <div className="content">
                         {showCart && <ContentCart updateCart={updateCartContent} cartDetails={cartTotals} />}
-                        <div className="content-title">Fruits</div>
-                        {login==="login"&&<LoginSignup />}
+                        <div className="content-title">{ContentTitle()}</div>
+                        <div>{curPageType}</div>
+                        {curPageType===999999 && <LoginSignup />}
                         <Products items={productsItems} updateCart={updateCartContent} />
                     </div>
                 </div>
