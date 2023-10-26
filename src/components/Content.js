@@ -3,8 +3,9 @@ import Header from "./Header"
 import Footer from "./Footer"
 import Menu from "./Menu"
 import ContentCart from "./ContentCart";
-import Products from "./Products";
-import LoginSignup from "./LoginSignup";
+import Products from "../pages/Products";
+import LoginSignup from "../pages/LoginSignup";
+import TextPage from "../pages/TextPage";
 import { 
     collection,
     onSnapshot, 
@@ -45,6 +46,7 @@ export default function Content(props) {
 
     }
     //console.log(productsItems)
+    //console.log(pages)
 
     /* const images = [
         {
@@ -75,14 +77,24 @@ export default function Content(props) {
 
        //pages hook:
        React.useEffect(() => {
+        
         const fetchData = async () => {
             const cdata = await dbQuery("sws-pages", db, true)
             const nArr = cdata && cdata.map(pg => ({
                 ...pg.data(),
                 uid: pg.id
             }))
-            
-            setPages(nArr)
+            if (login) {
+                setPages(nArr)
+            } else {
+                const userPagesFiltered = nArr.filter(page => (page.type_id !== 21) && 
+                                                        (page.type_id !== 22) && 
+                                                        (page.type_id !== 23) && 
+                                                        (page.type_id !== 24) &&
+                                                        (page.type_id !== 2)
+                                                    )
+                setPages(userPagesFiltered)
+            }
            // console.log(nArr)
         }
         fetchData()
@@ -118,6 +130,7 @@ export default function Content(props) {
         } else {
             setCurrentCat(false)
             setProductsItems([])
+            curPageType === 1 && props.changeIntro()
         }
     }, [curPageType, currentPage])
 
@@ -237,11 +250,8 @@ export default function Content(props) {
             return false
         }
     }
-
     
     async function loginCheck() {
-        
-
         //console.log(curPageType)
         const pages = getPagesOfType(999999)
             if (login) {
@@ -252,6 +262,12 @@ export default function Content(props) {
                 setCurrentPage(pages[0].uid)
             }
       
+    }
+    function contactsPage() {
+        const nArr = pages.filter(page => (page.options.type === "contacts"))
+        if (nArr) {
+            setCurrentPage(nArr[0].uid)
+        }
     }
     return (
         <div className="main-wrapper">
@@ -269,12 +285,14 @@ export default function Content(props) {
                         changeIntro={props.changeIntro}
                         menuShowHide={menuShowHide}
                         login={loginCheck}
+                        contacts={contactsPage}
                     />            
                     <div className="content">
                         {showCart && <ContentCart updateCart={updateCartContent} cartDetails={cartTotals} />}
                         <div className="content-title">{ContentTitle()}</div>
                         <div>{curPageType}</div>
                         {curPageType===999999 && <LoginSignup />}
+                        {curPageType===100 && <TextPage pages={pages} id={currentPage} />}
                         <Products items={productsItems} updateCart={updateCartContent} />
                     </div>
                 </div>
