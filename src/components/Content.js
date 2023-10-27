@@ -290,7 +290,7 @@ export default function Content(props) {
                     <div className="content">
                         {showCart && <ContentCart updateCart={updateCartContent} cartDetails={cartTotals} />}
                         <div className="content-title">{ContentTitle()}</div>
-                        <div>{curPageType}</div>
+                        
                         {curPageType===999999 && <LoginSignup />}
                         {curPageType===100 && <TextPage pages={pages} id={currentPage} />}
                         <Products items={productsItems} updateCart={updateCartContent} />
