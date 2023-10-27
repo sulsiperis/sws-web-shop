@@ -12,12 +12,12 @@ import {
     getDocs, //returns docs with given query
   } from "firebase/firestore"
 import { db } from "../firebase"
-import bcrypt from "bcryptjs-react";
+import bcrypt from "bcryptjs-react"; //passw encryption
 
 //const bcrypt = require('bcryptjs');
 const saltRounds = 12;
 
-export default function LoginSignup() {
+export default function LoginSignup(props) {
     const [showSignup, setShowSignup] = React.useState(false)
     const [loginData, setLoginData] = React.useState({
         "email": "",
@@ -49,7 +49,13 @@ export default function LoginSignup() {
                         if(passwHash) {
                             //successful login
                             //set cookie or smth
-                            console.log("successful login!!!!!!!")
+                            props.handleLogin(true)
+                            setLoginData({
+                                "email": "",
+                                "passw": ""
+                            })
+                            //console.log("successful login!!!!!!!")
+                            
 
                         } else {
                             alert("Wrong email or password")
@@ -88,7 +94,16 @@ export default function LoginSignup() {
                                     })
                                     docRef()
 
-                                    //console.log(passwHash)
+                                    console.log("successful signup")
+                                    setSignupData({
+                                        "email": "",
+                                        "name": "",
+                                        "passw": "",
+                                        "passw2": ""
+                                    })
+                                    toggleSignup()
+
+                                    //clear signupdata and hide signup block
                                 }
                             }
                             ppp()

@@ -26,6 +26,7 @@ export default function Content(props) {
     
 
     const [pages, setPages] = React.useState([])
+    const [pagesRaw, setPagesRaw] = React.useState([])
     const [currentPage, setCurrentPage] = React.useState()
     const [curPageType, setCurPageType] = React.useState(0)
     const [currentCat, setCurrentCat] = React.useState()
@@ -35,7 +36,7 @@ export default function Content(props) {
     const [cartContent, setCartContent] = React.useState(JSON.parse(localStorage.getItem("cart")))
     const [cartTotals, setCartTotals] = React.useState({"cartTotal": 0, "cartItems": 0})
     const [login, setLogin] = React.useState(false)
-    
+     
     const ContentTitle = () => {
         const curPageArr =  pages.filter(page => page.uid === currentPage)
         if (curPageArr.length>0) {
@@ -84,21 +85,31 @@ export default function Content(props) {
                 ...pg.data(),
                 uid: pg.id
             }))
-            if (login) {
-                setPages(nArr)
-            } else {
-                const userPagesFiltered = nArr.filter(page => (page.type_id !== 21) && 
-                                                        (page.type_id !== 22) && 
-                                                        (page.type_id !== 23) && 
-                                                        (page.type_id !== 24) &&
-                                                        (page.type_id !== 2)
-                                                    )
-                setPages(userPagesFiltered)
-            }
+            setPagesRaw(nArr)
+            
            // console.log(nArr)
         }
         fetchData()
     }, [])
+
+    React.useEffect(() => {
+        /* if  (pagesRaw.length > 0) {
+            setLoginRedirectPage(getPagesOfType(21)[0].uid)
+        } */
+        if (login) {
+            setPages(pagesRaw)
+        } else {
+            const userPagesFiltered = pagesRaw.filter(page => (page.type_id !== 21) && 
+                                                    (page.type_id !== 22) && 
+                                                    (page.type_id !== 23) && 
+                                                    (page.type_id !== 24) &&
+                                                    (page.type_id !== 2)
+                                                )
+            setPages(userPagesFiltered)
+        }
+        
+    }, [login, pagesRaw])
+    
     
  
 
@@ -119,7 +130,7 @@ export default function Content(props) {
         getType()        
     }, [currentPage])
 
-    //product gallery hook:
+    //product gallery hook and special pages redirection by type:
     React.useEffect(() => {
         //console.log(curPageType)
         //categories file type        
@@ -130,7 +141,10 @@ export default function Content(props) {
         } else {
             setCurrentCat(false)
             setProductsItems([])
+            //home menu item
             curPageType === 1 && props.changeIntro()
+            //logout menu item
+            curPageType === 24 && handleLogout()
         }
     }, [curPageType, currentPage])
 
@@ -227,7 +241,7 @@ export default function Content(props) {
     }
     function getPageType(id) {
         if (id) {
-            const qData = pages.filter(page => (page.uid === id))
+            const qData = pagesRaw.filter(page => (page.uid === id))
             //console.log(qData[0].type_id)
             return qData[0].type_id
         } else {
@@ -244,7 +258,7 @@ export default function Content(props) {
     }
     function getPagesOfType(typeId) {
         if (typeId) {
-            const qData = pages.filter(page => (page.type_id === typeId))
+            const qData = pagesRaw.filter(page => (page.type_id === typeId))
             return qData
         } else {
             return false
@@ -252,23 +266,40 @@ export default function Content(props) {
     }
     
     async function loginCheck() {
-        //console.log(curPageType)
-        const pages = getPagesOfType(999999)
+        
+        
             if (login) {
-                //whe n user logged in
+                
+                //go to user info page
+                setCurrentPage(getPagesOfType(21)[0].uid)
+                //when user is logged in
                 //probably get page by type_id and setCurrentPage to user
             } else {
                 //console.log( pages[0].uid )
+                //login/sign-up page hidden from menu hierarchy
+                const pages = getPagesOfType(999999)
                 setCurrentPage(pages[0].uid)
             }
       
     }
+    function handleLogin(lState) {
+        setLogin(lState)
+        //redirect to user info page if login successful
+        setCurrentPage(getPagesOfType(21)[0].uid)
+    }
+
+    function handleLogout() {
+        login && setLogin(false)
+    }
+
+    //when contacts button on header is clicked
     function contactsPage() {
         const nArr = pages.filter(page => (page.options.type === "contacts"))
         if (nArr) {
             setCurrentPage(nArr[0].uid)
         }
     }
+
     return (
         <div className="main-wrapper">
             <div className="main">
@@ -291,7 +322,7 @@ export default function Content(props) {
                         {showCart && <ContentCart updateCart={updateCartContent} cartDetails={cartTotals} />}
                         <div className="content-title">{ContentTitle()}</div>
                         
-                        {curPageType===999999 && <LoginSignup />}
+                        {curPageType===999999 && <LoginSignup handleLogin={handleLogin} />}
                         {curPageType===100 && <TextPage pages={pages} id={currentPage} />}
                         <Products items={productsItems} updateCart={updateCartContent} />
                     </div>
