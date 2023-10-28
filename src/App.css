@@ -61,11 +61,26 @@ body {
 /********** header *********/
 .header {
   display: grid;
-  grid-template-columns: 30px 108px 1fr 33px 33px;
+  grid-template-columns: 30px 108px 1fr 66px;
   align-items: center;
   background: rgb(207, 206, 112);
  
 }
+.header-buttons-wrapper-row {
+  display: flex;
+  justify-content: flex-start;  
+  align-content: center;
+  gap: 4px;
+  margin: 0px;
+  padding: 0px;
+}
+.header-buttons-wrapper-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 3px;
+}
+
 .logo {
   height: 40px;  
   cursor: pointer;
@@ -100,6 +115,9 @@ body {
   cursor: pointer;
 
 }
+.header-hello {
+  font-size: 9px;
+}
 .header-email, .header-user, .header-menu-toggle {
   display: flex;
   justify-content: center;
@@ -115,7 +133,8 @@ body {
   ;
 
 }
-.header-email:hover, .header-user:hover {
+
+.header-email span:hover, .header-user span:hover {
 
   border: 1px dotted #000;
   border-radius: 6px;
@@ -185,6 +204,13 @@ body {
   padding-bottom: 6px;
   display: flex;  
   padding: 12px 12px 8px 22px;
+  
+}
+.content-title span {
+  border-bottom: 1px solid #000;
+  padding: 0px 4px 0px 4px;
+  border-bottom-left-radius: 9px;
+  border-bottom-right-radius: 9px;
 }
 
 /********** cart notification *********/

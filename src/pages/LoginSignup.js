@@ -55,7 +55,7 @@ export default function LoginSignup(props) {
                                 "passw": ""
                             })
                             //console.log("successful login!!!!!!!")
-                            
+                            props.handleCookie(userData[0].data().name, userData[0].data().email)
 
                         } else {
                             alert("Wrong email or password")
@@ -94,7 +94,7 @@ export default function LoginSignup(props) {
                                     })
                                     docRef()
 
-                                    console.log("successful signup")
+                                    //console.log("successful signup")
                                     setSignupData({
                                         "email": "",
                                         "name": "",
