@@ -194,6 +194,7 @@ body {
   
   border-top: 2px solid #fff;
   padding-bottom: 12px;
+  padding: 0px 12px 12px 12px;
   
 }
 
@@ -215,11 +216,12 @@ body {
 
 /********** cart notification *********/
 .content-cart {
-  margin-top: 2px;
+  margin-top: 1px;
   display: block;
   /* position:absolute; */  
   float: right;
   width: auto;
+  margin-right: -12px;
   font-size: 14px;
   font-weight: 200;
   
@@ -247,11 +249,12 @@ body {
   height: 26px;
   cursor: pointer;
   background: #c5b912;
-  border: 1px solid #fff;
-  border-radius: 6px;
+  
   padding: 0px 8px 0px 8px;
   font-size: 12px;
   font-weight: 600;
+  border: 1px solid #fff;
+  border-radius: 6px;
   box-shadow: 
     0px 0px 6px 1px rgba(253, 243, 185, 1)
   ;
@@ -282,16 +285,16 @@ body {
 }
 /********** products *********/
 .products {
-  padding: 0px 12px 0px 12px;
+  /* padding: 0px 12px 0px 12px; */
 }
-.product-thumb {
+.product-item-thumb {
   width: 80px;
   height: 80px;
   border: 3px solid #000;
   border-radius: 6px;
   cursor: pointer;
 }
-.product {
+.product-item {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -300,14 +303,14 @@ body {
   padding-block: 12px;
   
 }
-.product-title {
+.product-item-title {
   font-size: 16px;
   font-weight: 700;
   padding: 6px;
   cursor: pointer;
   margin-right: 6px;
 }
-.product-price {
+.product-item-price {
 
   font-size: 21px;
   font-weight: 200;
@@ -315,7 +318,7 @@ body {
   margin: 0px 4px 0px 0px;
   cursor: pointer;
 }
-.product-stock {
+.product-item-stock {
   font-size: 11px;
   font-weight: 400;
   border-radius: 4px;
@@ -326,11 +329,31 @@ body {
   height: 20px;
   color: #2e502e;
 }
-.product-info-wrapper {  
+.product-item-info-wrapper {  
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
+}
+/********** Product *********/
+.product-image {
+  max-width: 100%;
+  border: 3px solid #000;
+  border-radius: 6px;
+}
+
+.product-close {
+  padding-bottom: 4px;  
+}
+.product-quantity {
+  font-size: 16px;
+  width: 60px;
+  margin-right: 12px;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  box-shadow: 
+    0px 0px 6px 1px rgba(253, 243, 185, 1)
+  ;
 }
 
 /********** Login *********/

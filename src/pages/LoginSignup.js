@@ -46,16 +46,16 @@ export default function LoginSignup(props) {
                 if(userData[0]?.data().email) {
                     const ppp = async() => {
                         const passwHash = await bcrypt.compare(loginData.passw, userData[0].data().passw)
-                        if(passwHash) {
-                            //successful login
-                            //set cookie or smth
+                        if(passwHash) {                            
                             props.handleLogin(true)
+
+                            //change this into useRef ************************
                             setLoginData({
                                 "email": "",
                                 "passw": ""
                             })
                             //console.log("successful login!!!!!!!")
-                            props.handleCookie(userData[0].data().name, userData[0].data().email)
+                            props.handleCookie(userData[0].data().name, userData[0].id)
 
                         } else {
                             alert("Wrong email or password")
@@ -83,14 +83,17 @@ export default function LoginSignup(props) {
                         if(querySnap.length > 0) {
                             alert("Email already exists!")
                         } else {
-                            const ppp = async() => {
+                            const checkPassw = async() => {
                                 const passwHash = await bcrypt.hash(signupData.passw, saltRounds)
                                 if(passwHash) {
                                     const docRef = async() => await addDoc(collection(db, "sws-users"), {
                                         name: signupData.name,
                                         email: signupData.email,
                                         level: 9,
-                                        passw: passwHash
+                                        passw: passwHash,
+                                        color_theme: "default",
+                                        registration_date: new Date(),
+                                        last_seen_date: new Date()
                                     })
                                     docRef()
 
@@ -106,7 +109,7 @@ export default function LoginSignup(props) {
                                     //clear signupdata and hide signup block
                                 }
                             }
-                            ppp()
+                            checkPassw()
                         }
 
                     }

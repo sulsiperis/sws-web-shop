@@ -3,16 +3,21 @@ import Header from "./Header"
 import Footer from "./Footer"
 import Menu from "./Menu"
 import ContentCart from "./ContentCart";
+//pages:
 import Products from "../pages/Products";
 import LoginSignup from "../pages/LoginSignup";
 import TextPage from "../pages/TextPage";
+import UserInfo from "../pages/UserInfo";
+
+
 import { 
     collection,
     onSnapshot, 
     addDoc, //adds collection to db
-    doc, //reference to specific item
+    doc, //reference to specific item (autogenerate id)
     deleteDoc, //delete db item
-    setDoc, //updates db item
+    updateDoc, //updates doc
+    setDoc, //adds or overwrites doc
     query, //db query
     where, //where statement for query
     getDocs, //returns docs with given query
@@ -33,10 +38,12 @@ export default function Content(props) {
     const [currentCat, setCurrentCat] = React.useState()
     const [productsItems, setProductsItems] = React.useState([])
     const [showCart, setShowCart] = React.useState(true)
+    const [showProduct, setShowProduct] = React.useState()
     const [toggleMenu, setToggleMenu] = React.useState(true)
     const [cartContent, setCartContent] = React.useState(JSON.parse(localStorage.getItem("cart")))
     const [cartTotals, setCartTotals] = React.useState({"cartTotal": 0, "cartItems": 0})
     const [login, setLogin] = React.useState(false)
+    const [uInfo, setUInfo] = React.useState()
 
     const [cookies, setCookie, removeCookie] = useCookies(["user"]);
      
@@ -94,6 +101,7 @@ export default function Content(props) {
         fetchData()  
         cookies.user && setLogin(true)      
     }, [])
+
     //cookies hook
     React.useEffect(() => {
         !cookies.user && setLogin(false)
@@ -104,15 +112,34 @@ export default function Content(props) {
     //cookie update hook on page change activity
     React.useEffect(() => {
         if (login && cookies.user) {
-            const name = cookies.user.split("%")[0] , email = cookies.user.split("%")[1] 
-            handleCookie(name, email)
+            const name = cookies.user.split("%")[0] , userId = cookies.user.split("%")[1] 
+            handleCookie(name, userId)
         }
+        setShowProduct()
     }, [currentPage, currentCat])
 
-    //page filter hook for menu when user no loggged in
+    //console.log(cookies.user)
+    //hook for loading user info and filter pages for menu when user not logged in
     React.useEffect(() => {        
-        if (login) {
+        if (login) {        
             setPages(pagesRaw)
+
+            const getUserInfo = async() => {
+                const userData = await dbQuery("sws-users", db, false, ["__name__", "==", cookies.user.split("%")[1]])
+                if (userData[0]) {
+                    setUInfo({
+                        "id":userData[0].id,
+                        "name":userData[0].data().name,
+                        "email":userData[0].data().email, 
+                        "level":userData[0].data().level,
+                        "last_seen":userData[0].data().last_seen_date,
+                        "reg_date":userData[0].data().registration_date,
+                        "color_theme": userData[0].data().color_theme 
+                    })
+                }
+            }            
+            getUserInfo()
+            
         } else {
             const userPagesFiltered = pagesRaw.filter(page => (page.type_id !== 21) && 
                                                     (page.type_id !== 22) && 
@@ -125,9 +152,6 @@ export default function Content(props) {
         
     }, [login, pagesRaw])
     
-    
- 
-
     //page type hook
     React.useEffect(() => {
 
@@ -149,7 +173,9 @@ export default function Content(props) {
     //product gallery hook and special pages redirection by type:
     React.useEffect(() => {
         //console.log(curPageType)
-        //categories file type        
+        //categories file type 
+        
+        
         if (curPageType === 200) {
             const curentPageArr = pages.filter(page => (page.uid === currentPage))
             //console.log(curentPageArr[0].options.type)
@@ -230,10 +256,10 @@ export default function Content(props) {
         //toFixed(2) rounds a number and returns 2 digis after dot
         setCartTotals({"cartTotal": total.toFixed(2), "cartItems": count})
     }
+
+    //when single product item clicked
     
     
-
-
     function pageChange(id) {
         //console.log("clicked: " + id)
         setCurrentPage(id)
@@ -296,8 +322,8 @@ export default function Content(props) {
       
     }
     //cookie auto expire after 12 min of inactivity.
-    function handleCookie(userName, userEmail) {
-        setCookie("user", userName + "%" + userEmail, { maxAge: 60*12, sameSite: 'lax' });  
+    function handleCookie(userName, userId) {
+        setCookie("user", userName + "%" + userId, { maxAge: 60*12, sameSite: 'lax' });  
     }
 
     function handleLogin(lState) {
@@ -306,9 +332,19 @@ export default function Content(props) {
         setCurrentPage(getPagesOfType(21)[0].uid)
     }
 
+    async function setLastSeen() {
+        const userRef = doc(db, "sws-users", cookies.user.split("%")[1])
+        await updateDoc(userRef, { last_seen_date: new Date() })
+        //setDoc(collection(db, "sws-users"),)
+    }
+
     function handleLogout() {
-        removeCookie("user");
-        login && setLogin(false)
+        setLastSeen()
+        removeCookie("user", {sameSite: 'lax'})        
+        if(login) { 
+            setUInfo()
+            setLogin(false)
+        }
     }
 
     //when contacts button on header is clicked
@@ -349,7 +385,15 @@ export default function Content(props) {
                         
                         {curPageType===999999 && <LoginSignup handleLogin={handleLogin} handleCookie={handleCookie} />}
                         {curPageType===100 && <TextPage pages={pages} id={currentPage} />}
-                        <Products items={productsItems} updateCart={updateCartContent} />
+                        {curPageType===21 && login && uInfo && <UserInfo user={uInfo} handleLogout={handleLogout} />}
+                        <Products 
+                            items={productsItems} 
+                            updateCart={updateCartContent} 
+                            currentPage={currentPage}
+                            currentCat={currentCat}
+                            showProduct={showProduct}
+                            setShowProduct={(prodObj) => setShowProduct(prodObj)}
+                        />
                     </div>
                 </div>
             </div>

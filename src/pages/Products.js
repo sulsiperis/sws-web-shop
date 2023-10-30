@@ -1,4 +1,13 @@
+import React from "react";
+import Product from "../pages/Product";
+
+
 export default function Products(props) {
+    
+
+/*     React.useEffect(() => {
+        handleHideProduct()
+    }, [props.currentPage, props.currentCat]) */
 
     function checkQuantity(itemId, quantityToAdd) {
         const oldStorage = JSON.parse(localStorage.getItem("cart"));
@@ -28,6 +37,13 @@ export default function Products(props) {
         props.updateCart(newStorage)
         
     }
+    function handleShowProduct(prodObj) {
+        props.setShowProduct(prodObj)
+    }
+    function handleHideProduct() {
+        props.setShowProduct()
+    }
+    
     const prods = props.items.map(prod => {      
         let imageSrc
         try {
@@ -36,17 +52,17 @@ export default function Products(props) {
             imageSrc = require(`../img/empty_img.png`)
         }
         return ( 
-            <div className="product" key={prod.uid}>
+            <div className="product-item" key={prod.uid}>
                 <img 
                     src={imageSrc}
-                    className="product-thumb" 
+                    className="product-item-thumb" 
                 />
                 {/* <ImageGallery items={images} showThumbnails={false} /> */}
-                <span className="product-title">{prod.title}</span>
-                <div className="product-info-wrapper">
+                <span className="product-item-title" onClick={() => handleShowProduct(prod)}>{prod.title}</span>
+                <div className="product-item-info-wrapper">
                     
-                        <span className="product-price">{prod.price}€</span>
-                        <span className="product-stock">{prod.stock}</span>
+                        <span className="product-item-price">{prod.price}€</span>
+                        <span className="product-item-stock">{prod.stock}</span>
                         <button className="btn" onClick={() => addToCart(prod.uid)}>Add to cart</button>
 
                 </div>
@@ -54,8 +70,7 @@ export default function Products(props) {
         )
     })
     return (
-        <div className="products">
-            {prods}           
-        </div>
+
+        props.showProduct ? <Product prod={props.showProduct} close={handleHideProduct} addToCart={addToCart} /> : <div className="products">{prods}</div> 
     )
 }

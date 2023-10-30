@@ -13,6 +13,10 @@
 13. Fix the bug when sometimes after pressing home button and coming back - menu doesn't show up
 14. fix header buttons height when hovered to be nice rectangle
 15. useRef() hook for passwords
+16. set last_seen_date on logout
+17. load user data for info page and hold in state on login +
+18. Fix category item click on currentCat while showing single product
+19. Cart design fix when showing single product
 
 ---------------
 localStorage:
