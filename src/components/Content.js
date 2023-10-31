@@ -102,9 +102,9 @@ export default function Content(props) {
         cookies.user && setLogin(true)      
     }, [])
 
-    //cookies hook
+    //cookie auto expiration hook
     React.useEffect(() => {
-        !cookies.user && setLogin(false)
+        !cookies.user && login && handleLogout()
        // console.log('cookies changed')
         
     }, [cookies.user])
@@ -332,15 +332,15 @@ export default function Content(props) {
         setCurrentPage(getPagesOfType(21)[0].uid)
     }
 
-    async function setLastSeen() {
-        const userRef = doc(db, "sws-users", cookies.user.split("%")[1])
+    async function setLastSeen(userId) {
+        const userRef = doc(db, "sws-users", userId?userId:cookies.user.split("%")[1])
         await updateDoc(userRef, { last_seen_date: new Date() })
-        //setDoc(collection(db, "sws-users"),)
+
     }
 
     function handleLogout() {
-        setLastSeen()
-        removeCookie("user", {sameSite: 'lax'})        
+        setLastSeen(uInfo.id)
+        cookies.user && removeCookie("user", {sameSite: 'lax'})        
         if(login) { 
             setUInfo()
             setLogin(false)

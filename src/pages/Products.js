@@ -62,8 +62,8 @@ export default function Products(props) {
                 <div className="product-item-info-wrapper">
                     
                         <span className="product-item-price">{prod.price}€</span>
-                        <span className="product-item-stock">{prod.stock}</span>
-                        <button className="btn" onClick={() => addToCart(prod.uid)}>Add to cart</button>
+                        <span className="product-item-stock">{prod.stock>0?prod.stock:"Out of stock!"}</span>
+                        {prod.stock>0 && <button className="btn" onClick={() => addToCart(prod.uid)}>Add to cart</button>}
 
                 </div>
             </div>

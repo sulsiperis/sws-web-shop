@@ -310,20 +310,23 @@ body {
   cursor: pointer;
   margin-right: 6px;
 }
+.product-item-title:hover {
+  text-decoration-line: underline;
+  text-decoration-style: dotted; 
+  text-decoration-thickness: 1px;
+}
 .product-item-price {
 
   font-size: 21px;
   font-weight: 200;
   letter-spacing: 1px;
   margin: 0px 4px 0px 0px;
-  cursor: pointer;
 }
 .product-item-stock {
   font-size: 11px;
   font-weight: 400;
   border-radius: 4px;
   border: 1px solid #000;
-  cursor: pointer;
   padding: 2px;
   margin-right: 6px;
   height: 20px;
@@ -342,18 +345,73 @@ body {
   border-radius: 6px;
 }
 
+.product p {
+  margin-block: 8px;
+}
+
 .product-close {
   padding-bottom: 4px;  
 }
 .product-quantity {
-  font-size: 16px;
+  height: 26px;
   width: 60px;
-  margin-right: 12px;
+  /* margin-right: 12px; */
   border: 1px solid #fff;
   border-radius: 6px;
   box-shadow: 
     0px 0px 6px 1px rgba(253, 243, 185, 1)
   ;
+  background: rgba(253, 243, 185, 1);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.product-quantity { 
+  -moz-appearance: textfield;
+  appearance: textfield;
+  margin: 0;
+}
+.product-quantity::-webkit-inner-spin-button,
+.product-quantity::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+}
+.quantity-spinner:hover, .product-quantity:hover {
+  border: 1px dotted #000;
+}
+.quantity-spinner {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  font-size: 33px;
+  font-weight: 600;
+ 
+  padding-bottom: 4px;
+  cursor: pointer;
+  background: #c5b912;    
+  border: 1px solid #fff;
+  border-radius: 6px;
+  box-shadow: 
+    0px 0px 6px 1px rgba(253, 243, 185, 1)
+  ;
+  height: 26px;
+  width: 26px;
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  
+}
+.quantity-wrapper {
+  display: inline-flex;  
+}
+
+.quantity-wrapper button {
+  margin-left: 16px;
 }
 
 /********** Login *********/
