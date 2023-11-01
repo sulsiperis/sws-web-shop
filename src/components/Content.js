@@ -38,7 +38,7 @@ export default function Content(props) {
     const [curPageType, setCurPageType] = React.useState(0)
     const [currentCat, setCurrentCat] = React.useState()
     const [productsItems, setProductsItems] = React.useState([])
-    
+    const [allProducts, setAllProducts] = React.useState([])
     const [showCart, setShowCart] = React.useState(true)
     const [showProduct, setShowProduct] = React.useState()
     const [toggleMenu, setToggleMenu] = React.useState(true)
@@ -46,6 +46,7 @@ export default function Content(props) {
     const [cartTotals, setCartTotals] = React.useState({"cartTotal": 0, "cartItems": 0})
     const [login, setLogin] = React.useState(false)
     const [uInfo, setUInfo] = React.useState()
+    const [users, setUsers] = React.useState()
 
     const [cookies, setCookie, removeCookie] = useCookies(["user"]);
      
@@ -87,6 +88,21 @@ export default function Content(props) {
         },
     ]; */
 
+    React.useEffect(() => {
+        const getProds = async () => {
+            const cdata2 = await dbQuery("sws-products", db, true)
+            //console.log(cdata2)
+            const nArr2 = cdata2.map(prod => ({
+                ...prod.data(),
+                uid: prod.id
+            }))
+            
+            setAllProducts(nArr2)
+        }
+        getProds()
+    
+    }, [])
+
     //pages hook:
     React.useEffect(() => {
         cookies.user && setLogin(true)
@@ -110,6 +126,28 @@ export default function Content(props) {
         !cookies.user && login && handleLogout()
           
     }, [cookies.user])
+
+
+
+    //load all users hook
+    React.useEffect(() => {       
+        const qUsers = async () => {
+            const q = await dbQuery("sws-users", db, true)                
+            if (q.length>0) {
+                //console.log(q)
+                const nArr3 = q.map(usr => ({
+                    ...usr.data(),
+                    "id": usr.id,
+                                        
+                }))
+                //remove passw from array
+                nArr3.forEach(v => delete v.passw );                
+                setUsers(nArr3)                  
+            }          
+        }
+        qUsers()
+        
+    }, [login])
 
     //cookie update hook on page change activity
     React.useEffect(() => {
@@ -384,9 +422,9 @@ export default function Content(props) {
                         {showCart && <ContentCart updateCart={updateCartContent} cartDetails={cartTotals} />}
                         <div className="content-title"><span>{ContentTitle()}</span></div>
                         
-                        {curPageType===999999 && <LoginSignup handleLogin={handleLogin} handleCookie={handleCookie} />}
+                        {curPageType===999999 && <LoginSignup handleLogin={handleLogin} handleCookie={handleCookie} users={users} />}
                         {curPageType===100 && <TextPage pages={pages} id={currentPage} />}
-                        {curPageType===21 && login && uInfo && <UserInfo user={uInfo} handleLogout={handleLogout} />}
+                        {curPageType===21 && login && uInfo && <UserInfo user={uInfo} handleLogout={handleLogout} prod={allProducts} />}
                         {curPageType===23 && login && uInfo && <UserSettings user={uInfo} handleLogout={handleLogout} />}
                         <Products 
                             items={productsItems} 

@@ -447,12 +447,18 @@ body {
   padding-bottom: 12px;
 }
 /***** user info page ********/
-.userinfo span {
+.userinfo span, .user-settings span  {
   font-weight: 800;
 }
-.userinfo p {
+.userinfo p, .user-settings p {
   padding-block: 4px;
 }
+
+.user-admin {
+  color: #d65b09;
+  text-decoration: underline;
+}
+
 /************ Orders history ************/
 .orders_wrapper {
   display: table;

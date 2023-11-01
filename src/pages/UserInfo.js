@@ -5,9 +5,8 @@ import { db } from "../firebase"
 export default function UserInfo(props) {
 
     const [orders, setOrders] = React.useState()
-    const [allProducts, setAllProducts] = React.useState([])
-
-    let last_seen, reg, ordersComp
+    
+    //orders hook
     React.useEffect(() => {
         const qOrders = async () => {
             const uData = await dbQuery("sws-orders", db, false, ["user_id", "==", props.user.id])                
@@ -23,21 +22,10 @@ export default function UserInfo(props) {
         }
         qOrders()
     }, [])
+
     
-    React.useEffect(() => {
-        const getProds = async () => {
-            const cdata2 = await dbQuery("sws-products", db, true)
-            //console.log(cdata2)
-            const nArr2 = cdata2.map(prod => ({
-                ...prod.data(),
-                uid: prod.id
-            }))
-            
-            setAllProducts(nArr2)
-        }
-        getProds()
-        //console.log("EFFECT")
-    }, [])
+    
+    let last_seen, reg, ordersComp
 
     if(props.user.reg_date) {
         reg = props.user.reg_date.toDate().toLocaleDateString()+ "  " +props.user.reg_date.toDate().toLocaleTimeString()
@@ -51,7 +39,7 @@ export default function UserInfo(props) {
 
         ordersComp = orders.map(function(o) {
 
-        const prod =  allProducts.filter(page => page.uid === o.item_id)
+        const prod =  props.prod.filter(page => page.uid === o.item_id)
 
 
 //console.log(allProducts)

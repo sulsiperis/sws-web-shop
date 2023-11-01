@@ -29,6 +29,11 @@ export default function LoginSignup(props) {
         "passw": "",
         "passw2": ""
     })
+    
+
+    //users hook
+    
+    
 
 
     function toggleSignup() {
@@ -89,7 +94,7 @@ export default function LoginSignup(props) {
                                     const docRef = async() => await addDoc(collection(db, "sws-users"), {
                                         name: signupData.name,
                                         email: signupData.email,
-                                        level: 9,
+                                        level: props.users.length>0?9:1,
                                         passw: passwHash,
                                         color_theme: "default",
                                         registration_date: new Date(),
