@@ -5,9 +5,9 @@ export default function Header(props) {
            <img src={require(`../img/sws_logo.png`)} className="logo" onClick={props.changeIntro} />
            <div className="header-title">Simple Web Shop</div>
            <div className="header-buttons-wrapper-col"> 
-                <div className="header-buttons-wrapper-row">                                
-                    <div className="header-email" onClick={props.contacts}><span>🕊</span></div>
-                    <div className="header-user" onClick={props.login}><span>웃</span></div>
+                <div className="header-buttons-wrapper-row">
+                    <span className="header-email" onClick={props.contacts}>🕊</span>
+                    <span className="header-user" onClick={props.login}>웃</span>
                 </div>
                 
                 { props.login && props.loggedInName && 

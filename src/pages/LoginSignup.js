@@ -149,25 +149,29 @@ export default function LoginSignup(props) {
 
     return (
         <div className="login">
-            <div className="login-wrapper">
-                <form name="loginForm" className="login" onSubmit={handleLoginSubmit} > 
-                    <input type="email" name="email" placeholder="Email" required value={loginData.email} onChange={handleChangeLogin} />
-                    <input type="password" name="passw" placeholder="Password" required value={loginData.passw} onChange={handleChangeLogin} />
-                    <button type="submit">Login</button>
-                </form>
-            </div>
+            
+            <form name="loginForm" className="login" onSubmit={handleLoginSubmit} > 
+                <div className="login-wrapper">
+                    <input type="email" className="input" name="email" placeholder="Email" required value={loginData.email} onChange={handleChangeLogin} />
+                    <input type="password" className="input" name="passw" placeholder="Password" required value={loginData.passw} onChange={handleChangeLogin} />
+                    <button type="submit" className="btn">Login</button>
+                </div>
+            </form>
+            
             <h4>- Or -</h4>
             <span className="link" onClick={toggleSignup}>Sign-up</span>
             {showSignup &&
-                <div className="signup-wrapper">
-                    <form name="signupForm" className="login" onSubmit={handleSignupSubmit} >
-                        <input type="email" name="email" placeholder="Email" required value={signupData.email} onChange={handleChangeSignup} />
-                        <input type="text" name="name" placeholder="Name" required value={signupData.name} onChange={handleChangeSignup} />
-                        <input type="password" name="passw" placeholder="Password" required value={signupData.passw} onChange={handleChangeSignup} />
-                        <input type="password" name="passw2" placeholder="Repeat password" required value={signupData.passw2} onChange={handleChangeSignup} />
-                        <button type="submit">Sign up</button>
-                    </form>
-                </div>
+                <form name="signupForm" className="login" onSubmit={handleSignupSubmit} >
+                    <div className="signup-wrapper">
+                    
+                        <input className="input" type="email" name="email" placeholder="Email" required value={signupData.email} onChange={handleChangeSignup} />
+                        <input className="input" type="text" name="name" placeholder="Name" required value={signupData.name} onChange={handleChangeSignup} />
+                        <input className="input" type="password" name="passw" placeholder="Password" required value={signupData.passw} onChange={handleChangeSignup} />
+                        <input className="input" type="password" name="passw2" placeholder="Repeat password" required value={signupData.passw2} onChange={handleChangeSignup} />
+                        <button type="submit" className="btn">Sign up</button>
+                    </div>
+                </form>
+                
             }
         </div>
     )

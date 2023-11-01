@@ -8,6 +8,7 @@ import Products from "../pages/Products";
 import LoginSignup from "../pages/LoginSignup";
 import TextPage from "../pages/TextPage";
 import UserInfo from "../pages/UserInfo";
+import UserSettings from "../pages/UserSettings";
 
 
 import { 
@@ -56,8 +57,7 @@ export default function Content(props) {
         }
 
     }
-    //console.log(productsItems)
-    //console.log(pages)
+
 
     /* const images = [
         {
@@ -96,7 +96,7 @@ export default function Content(props) {
             }))
             setPagesRaw(nArr)
             
-           // console.log(nArr)
+         
         }
         fetchData()  
         cookies.user && setLogin(true)      
@@ -105,8 +105,7 @@ export default function Content(props) {
     //cookie auto expiration hook
     React.useEffect(() => {
         !cookies.user && login && handleLogout()
-       // console.log('cookies changed')
-        
+          
     }, [cookies.user])
 
     //cookie update hook on page change activity
@@ -118,10 +117,10 @@ export default function Content(props) {
         setShowProduct()
     }, [currentPage, currentCat])
 
-    //console.log(cookies.user)
-    //hook for loading user info and filter pages for menu when user not logged in
+
+    //hook for loading user info, orders and filter pages for menu when user not logged in
     React.useEffect(() => {        
-        if (login) {        
+        if (login) {    
             setPages(pagesRaw)
 
             const getUserInfo = async() => {
@@ -172,13 +171,11 @@ export default function Content(props) {
 
     //product gallery hook and special pages redirection by type:
     React.useEffect(() => {
-        //console.log(curPageType)
+        
         //categories file type 
-        
-        
         if (curPageType === 200) {
             const curentPageArr = pages.filter(page => (page.uid === currentPage))
-            //console.log(curentPageArr[0].options.type)
+
             curentPageArr[0].options.type === "category" && setCurrentCat(curentPageArr[0].options.category_id)
         } else {
             setCurrentCat(false)
@@ -261,7 +258,7 @@ export default function Content(props) {
     
     
     function pageChange(id) {
-        //console.log("clicked: " + id)
+       
         setCurrentPage(id)
     }
     function menuShowHide() {
@@ -275,7 +272,7 @@ export default function Content(props) {
     async function getPageTypeFromDb(id) {
         if (id) {
             const qData = await dbQuery("sws-pages", db, false, ["__name__", "==", id])
-            //console.log(await qData[0].data().type_id)
+            
             return qData[0].data().type_id
         } else {
             return false
@@ -284,7 +281,7 @@ export default function Content(props) {
     function getPageType(id) {
         if (id) {
             const qData = pagesRaw.filter(page => (page.uid === id))
-            //console.log(qData[0].type_id)
+         
             return qData[0].type_id
         } else {
             return false
@@ -306,7 +303,7 @@ export default function Content(props) {
             return false
         }
     }
-    
+        
     async function loginCheck() {
             if (login) {
                 //go to user info page
@@ -314,7 +311,7 @@ export default function Content(props) {
                 //when user is logged in
                 //probably get page by type_id and setCurrentPage to user
             } else {
-                //console.log( pages[0].uid )
+                
                 //login/sign-up page hidden from menu hierarchy
                 const pages = getPagesOfType(999999)
                 setCurrentPage(pages[0].uid)
@@ -340,8 +337,9 @@ export default function Content(props) {
 
     function handleLogout() {
         setLastSeen(uInfo.id)
-        cookies.user && removeCookie("user", {sameSite: 'lax'})        
-        if(login) { 
+        cookies.user && removeCookie("user", {sameSite: 'lax'})
+       
+        if(login) {
             setUInfo()
             setLogin(false)
         }
@@ -386,6 +384,7 @@ export default function Content(props) {
                         {curPageType===999999 && <LoginSignup handleLogin={handleLogin} handleCookie={handleCookie} />}
                         {curPageType===100 && <TextPage pages={pages} id={currentPage} />}
                         {curPageType===21 && login && uInfo && <UserInfo user={uInfo} handleLogout={handleLogout} />}
+                        {curPageType===23 && login && uInfo && <UserSettings user={uInfo} handleLogout={handleLogout} />}
                         <Products 
                             items={productsItems} 
                             updateCart={updateCartContent} 

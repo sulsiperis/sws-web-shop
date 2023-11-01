@@ -1,22 +1,23 @@
-1. Fix the grid design to stop layers from overlaping +
-2. Change the colors +
-3. firestore connect for shop items +
-4. firestore design for pages and content +
+//1. Fix the grid design to stop layers from overlaping +
+//2. Change the colors +
+//3. firestore connect for shop items +
+//4. firestore design for pages and content +
 5. content editor
-6. move content-cart to separate component +
-7. menu toggle function +
+//6. move content-cart to separate component +
+//7. menu toggle function +
 8. fix the content+menu 100% height when low content
 9. update DB quantity only when purchase button pressed
 10. Fix the cart notifier design for small screens
 11. min/max font size in title and product description
-12. User auth +
+//12. User auth +
 13. Fix the bug when sometimes after pressing home button and coming back - menu doesn't show up
-14. fix header buttons height when hovered to be nice rectangle
+//14. fix header buttons height when hovered to be nice rectangle+
 15. useRef() hook for passwords
-16. set last_seen_date on logout
-17. load user data for info page and hold in state on login +
+//16. set last_seen_date on logout +
+//17. load user data for info page and hold in state on login +
 18. Fix category item click on currentCat while showing single product
 19. Cart design fix when showing single product
+20. Fix load orders bug when first logging in and showing userInfo page (orders doesn't appeas due to some bug w/ async) +
 
 ---------------
 localStorage:
