@@ -38,6 +38,7 @@ export default function Content(props) {
     const [curPageType, setCurPageType] = React.useState(0)
     const [currentCat, setCurrentCat] = React.useState()
     const [productsItems, setProductsItems] = React.useState([])
+    
     const [showCart, setShowCart] = React.useState(true)
     const [showProduct, setShowProduct] = React.useState()
     const [toggleMenu, setToggleMenu] = React.useState(true)
@@ -88,6 +89,7 @@ export default function Content(props) {
 
     //pages hook:
     React.useEffect(() => {
+        cookies.user && setLogin(true)
         const fetchData = async () => {
             const cdata = await dbQuery("sws-pages", db, true)
             const nArr = cdata && cdata.map(pg => ({
@@ -98,8 +100,9 @@ export default function Content(props) {
             
          
         }
-        fetchData()  
-        cookies.user && setLogin(true)      
+        fetchData()
+        
+        
     }, [])
 
     //cookie auto expiration hook
@@ -335,11 +338,11 @@ export default function Content(props) {
 
     }
 
-    function handleLogout() {
-        setLastSeen(uInfo.id)
+    function handleLogout() {        
         cookies.user && removeCookie("user", {sameSite: 'lax'})
        
         if(login) {
+            uInfo.id && setLastSeen(uInfo.id)
             setUInfo()
             setLogin(false)
         }

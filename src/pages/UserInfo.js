@@ -5,6 +5,7 @@ import { db } from "../firebase"
 export default function UserInfo(props) {
 
     const [orders, setOrders] = React.useState()
+    const [allProducts, setAllProducts] = React.useState([])
 
     let last_seen, reg, ordersComp
     React.useEffect(() => {
@@ -21,7 +22,21 @@ export default function UserInfo(props) {
             }           
         }
         qOrders()
-
+    }, [])
+    
+    React.useEffect(() => {
+        const getProds = async () => {
+            const cdata2 = await dbQuery("sws-products", db, true)
+            //console.log(cdata2)
+            const nArr2 = cdata2.map(prod => ({
+                ...prod.data(),
+                uid: prod.id
+            }))
+            
+            setAllProducts(nArr2)
+        }
+        getProds()
+        //console.log("EFFECT")
     }, [])
 
     if(props.user.reg_date) {
@@ -34,44 +49,27 @@ export default function UserInfo(props) {
     if(orders) {
        // console.log(props.orders)
 
-        ordersComp = orders.map(o => (
-            <div key={o.uid}>
-                <span>{o.date.toDate().toLocaleDateString()+ "  " +o.date.toDate().toLocaleTimeString()}</span>
-                <span>{o.item_id}</span>
-                <span>{o.quantity}</span>
-                <span>{o.price}</span>
-            </div>
-        ))
+        ordersComp = orders.map(function(o) {
+
+        const prod =  allProducts.filter(page => page.uid === o.item_id)
+
+
+//console.log(allProducts)
+
+        return (            
+            <tr key={o.uid}>
+                <td><span>{o.date.toDate().toLocaleDateString()+ "  " +o.date.toDate().toLocaleTimeString()}</span></td>
+                <td><span>{prod[0]?.title}</span></td>
+                <td><span>{o.quantity}</span></td>
+                <td><span>{o.price}</span></td>
+            </tr>
+        )})
         //orders = props.orders[0].date.toDate().toLocaleDateString()
     } else {
         ordersComp = "No orders yet!"
     }
-    //console.log(orders)
-    
+    //console.log(orders)   
 
-    
-    console.log(orders)
-
-     /* const q = async () => {
-        const uData = await props.orders(props.user.id)
-        if (uData.length>0) {
-            console.log(uData)
-            const nArr = uData && uData.map(order => ({
-                ...order.data(),
-                uid: order.id
-            }))
-            setOrders(nArr)
-            console.log("there is some orders")     
-        } else {
-            
-            setOrders("No orders yet.")
-            
-        }            
-    }
-    q() */
-
-    //console.log(orders)
-    
     return (
         <div className="userinfo">            
             <p><button className="btn" onClick={props.handleLogout}>Logout</button></p>
@@ -80,8 +78,25 @@ export default function UserInfo(props) {
             <p>Last login: <span>{last_seen}</span></p>
             <p>Theme: <span>{props.user.color_theme}</span></p>
             <p>Order history:</p>
-            {ordersComp}
-          
+            {Array.isArray(orders)? 
+                
+                <table className="orders_table">
+                    <thead>
+                        <tr>
+                            <td><span>Date</span></td>
+                            <td><span>Product</span></td>
+                            <td><span>Quantity</span></td>
+                            <td><span>Price per item</span></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {ordersComp}
+                    </tbody>
+                </table>
+                
+            : ordersComp
+            }
+            {Array.isArray(orders) && <p><button className="btn">Clear order data</button></p>}
         </div>
     )
     

@@ -444,5 +444,39 @@ body {
   padding-top: 12px;
 }
 .login-wrapper {
-  padding-bottom: 12px  ;
+  padding-bottom: 12px;
+}
+/***** user info page ********/
+.userinfo span {
+  font-weight: 800;
+}
+.userinfo p {
+  padding-block: 4px;
+}
+/************ Orders history ************/
+.orders_wrapper {
+  display: table;
+}
+.orders_table  {
+  border: 1px solid  rgba(253, 243, 185, 1);
+}
+.orders_table td {
+ /*  border: 1px solid #FFF; */
+  text-align: center;
+  padding: 2px 9px 2px 9px;
+  
+}
+.orders_table thead {
+  background: rgb(58, 56, 45, 0.3);
+  color: rgb(247, 247, 247, 0.8);
+}
+.orders_table, .orders_table th, .orders_table td {
+  border: 1px solid rgba(253, 243, 185, 1);
+}
+.orders_table {  
+  border-collapse: collapse;
+}
+.orders_table tbody {
+  font-size: 14px;
+  color: rgb(58, 56, 45, 1);
 }
