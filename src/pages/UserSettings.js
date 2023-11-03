@@ -16,14 +16,13 @@ import bcrypt from "bcryptjs-react"; //passw encryption
 const saltRounds = 12;
 
 export default function UserSettings(props) { 
-
-
+    const [themeData, setThemeData] = React.useState(props.user.color_theme)
+    
     const oldpassInputRef = useRef(null)
     const passInputRef = useRef(null)
     const pass2InputRef = useRef(null)
     const newNameInputRef = useRef(null)
     const delUserInputRef = useRef(null)
-    const newThemeInputRef = useRef(null)
 
 
     async function updatePassw(newPassw) {
@@ -36,10 +35,15 @@ export default function UserSettings(props) {
             updateDb()
         }        
     }
-
+    //checks given @passw of current logged in user with db and returns true if correct, false if not
     async function checkPassw(passw) {
+        const userData = await dbQuery("sws-users", db, false, ["__name__", "==", props.user.id])
+        const checkPass = async() => {
+            const passwHash = await bcrypt.compare(passw, userData[0].data().passw)
+            return passwHash
+        }
+        return checkPass()
         
-
     }
     
     const handleChangePassw = (event) => {
@@ -50,36 +54,33 @@ export default function UserSettings(props) {
         const pass = passInputRef.current.value
         const pass2 = pass2InputRef.current.value
 
+        let isCorrect = false
+
         if ((pass.length > 5) && (oldPass.length > 0)) {
-            const getUserData = async() => {
-                const userData = await dbQuery("sws-users", db, false, ["__name__", "==", props.user.id])
-                const checkPass = async() => {
-                    const passwHash = await bcrypt.compare(oldPass, userData[0].data().passw)
-                    if(passwHash) {
-                        if(pass === pass2) {
 
-                            updatePassw(pass)
-
-                            //console.log("success: ", oldPass, pass, pass2)
-                            //change passw logic
-                            alert("Password changed successfully.")
-                            
-                            oldpassInputRef.current.value = ''
-                            passInputRef.current.value = ''
-                            pass2InputRef.current.value = ''
-                        } else {
-                            oldpassInputRef.current.value = ''
-                            alert('New passwords missmatch!')
-                        }                    
-                        //console.log("passw correct")
-                    } else {
-                        alert("Wrong old password!")
+            const cp = async() => {
+                isCorrect = await checkPassw(oldPass)
+                if (isCorrect) {
+                    
+                    //console.log(checkPassw(oldPass))
+                    if(pass === pass2) {
+    
+                        updatePassw(pass)
+                        alert("Password changed successfully.")
+                        
                         oldpassInputRef.current.value = ''
+                        passInputRef.current.value = ''
+                        pass2InputRef.current.value = ''
+                    } else {
+                        oldpassInputRef.current.value = ''
+                        alert('New passwords missmatch!')
                     }
+                } else {
+                    alert("Wrong old password!")
+                    oldpassInputRef.current.value = ''
                 }
-                checkPass()            
             }
-            getUserData()
+            cp()
         } else {
             oldpassInputRef.current.value = ''
             alert("Password must be at least 6 symbols!")
@@ -108,19 +109,77 @@ export default function UserSettings(props) {
 
     }
 
-    function handleClearOrders(event) {
+    async function handleClearOrders(msg=true) {
+        if (!msg || window.confirm("Are you sure to delete all orders data?")) {
 
-    }
+            //delete orders 
+            const q = query(collection(db, "sws-orders"), where("user_id", "==", props.user.id))
+            try {
+                const querySnapshot = await getDocs(q)
+                if (querySnapshot.docs.length>0) {
+                    
+                    querySnapshot.forEach((d) => {
+                        const docRef = doc(db, "sws-orders", d.id)
+                        const dd = async() => {
+                            await deleteDoc(docRef)
+                        }
+                        dd()
+                        msg && alert("Orders data erased successfully.")
+                    })
+                } else {
+                    msg && alert("No orders to delete.")
+                }
+                
+            } catch (err) {                
+                    console.log("ERROR!: " + err)
+                    return false
+            }
 
-    function handleDelUser(event) {
-
+            
+        } 
     }
 
     function handleChangeTheme(event) {
-
+        //console.log(event.target.value)
+        setThemeData(event.target.value)
     }
 
-   
+    function changeTheme(event) {
+        event.preventDefault()
+        const updateDb = async() => {
+            const userRef = doc(db, "sws-users", props.user.id)
+            await updateDoc(userRef, { color_theme: themeData })
+            
+            props.updateTheme(themeData)
+            alert("Theme successfully changed.")
+        }
+        updateDb()
+    }
+
+    function handleDelUser(event) {
+        event.preventDefault()
+        const pass = delUserInputRef.current.value
+
+        const cp = async() => {
+            const isCorrect = await checkPassw(pass)
+            if (isCorrect) {
+                
+                if (window.confirm("Are you sure to delete your account and all data?")) {
+                    handleClearOrders(false)
+                    const dd = async() => {
+                        await deleteDoc(doc(db, "sws-users", props.user.id))
+                    }
+                    dd()
+                    props.handleLogout(true)
+                }
+            } else {
+                alert("Wrong password!")
+                
+            }
+            delUserInputRef.current.value = ''
+        }
+        cp()
+    }
     
     return (
         <div className="user-settings">
@@ -141,7 +200,7 @@ export default function UserSettings(props) {
                     </span>
                 </p>    
             </form>            
-            <p>Name: {props.user.level===1 && <span className="user-admin">Admin</span>}<span> {props.user.name}</span></p>
+            <p>Name: <span className="user-settings-username"> {props.user.name}</span> {props.user.level===1 && <span className="user-admin">(Admin)</span>}</p>
             <p className="user-settings-title">Change name:</p>           
             <form name="changeNameForm" className="usersettings-form" onSubmit={handleChangeName} > 
                 <p className="usersettings-block">
@@ -155,12 +214,49 @@ export default function UserSettings(props) {
             <p className="user-settings-title">Orders:</p>
             <p className="usersettings-block"><button className="btn" onClick={handleClearOrders}>Clear order data</button></p>
             <p className="user-settings-title">Color theme:</p>            
-            <form name="themeForm" className="theme-form" onSubmit={handleChangeTheme} > 
+            <form name="themeForm" className="theme-form" onSubmit={changeTheme} > 
                 <p className="usersettings-block">
                     <span className="settings-inputs">
-                        <input type="text" className="input" name="name" placeholder="New name" ref={newThemeInputRef} required />                        
-                        <button type="submit" className="btn">Confirm</button>
-                        
+                        <span>
+                            <input 
+                                type="radio"
+                                id="default"
+                                name="theme"
+                                value="default"
+                                checked={themeData === "default"}
+                                onChange={handleChangeTheme}
+                            /><label htmlFor="default" >Default</label>
+                            <input 
+                                type="radio"
+                                id="1"
+                                name="theme"
+                                value="1"
+                                checked={themeData === '1'}
+                                onChange={handleChangeTheme}
+                            />
+                            <label htmlFor="21">Sky</label>
+                            <input 
+                                type="radio"
+                                id="2"
+                                name="theme"
+                                value="2"
+                                checked={themeData === '2'}
+                                onChange={handleChangeTheme}
+                            />
+                            <label htmlFor="2">Emerald</label>
+                            <input 
+                                type="radio"
+                                id="3"
+                                name="theme"
+                                value="3"
+                                checked={themeData === '3'}
+                                onChange={handleChangeTheme}
+                            />
+                            <label htmlFor="3">Greyscale</label>
+                        </span>
+                        <span>                       
+                            <button type="submit" className="btn">Confirm</button>
+                        </span>
                     </span>
                 </p>    
             </form>            

@@ -38,18 +38,15 @@ export default function UserInfo(props) {
        // console.log(props.orders)
 
         ordersComp = orders.map(function(o) {
-
         const prod =  props.prod.filter(page => page.uid === o.item_id)
-
-
 //console.log(allProducts)
 
         return (            
             <tr key={o.uid}>
-                <td><span>{o.date.toDate().toLocaleDateString()+ "  " +o.date.toDate().toLocaleTimeString()}</span></td>
+                <td><span>{o.date?.toDate().toLocaleDateString()+ "  " +o.date?.toDate().toLocaleTimeString()}</span></td>
                 <td><span>{prod[0]?.title}</span></td>
-                <td><span>{o.quantity}</span></td>
-                <td><span>{o.price}</span></td>
+                <td><span>{o?.quantity}</span></td>
+                <td><span>{o?.price}</span></td>
             </tr>
         )})
         //orders = props.orders[0].date.toDate().toLocaleDateString()

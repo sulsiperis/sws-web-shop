@@ -376,11 +376,11 @@ export default function Content(props) {
 
     }
 
-    function handleLogout() {        
+    function handleLogout(delUser=false) {        
         cookies.user && removeCookie("user", {sameSite: 'lax'})
        
         if(login) {
-            uInfo.id && setLastSeen(uInfo.id)
+            !delUser && uInfo.id && setLastSeen(uInfo.id)
             setUInfo()
             setLogin(false)
         }
@@ -404,6 +404,15 @@ export default function Content(props) {
             return {
                 ...val,
                 name: newName
+            }
+        })
+    }
+
+    function updateTheme(theme) {
+        setUInfo(val => {
+            return {
+                ...val,
+                color_theme: theme
             }
         })
     }
@@ -434,7 +443,7 @@ export default function Content(props) {
                         {curPageType===999999 && <LoginSignup handleLogin={handleLogin} handleCookie={handleCookie} users={users} />}
                         {curPageType===100 && <TextPage pages={pages} id={currentPage} />}
                         {curPageType===21 && login && uInfo && <UserInfo user={uInfo} handleLogout={handleLogout} prod={allProducts} />}
-                        {curPageType===23 && login && uInfo && <UserSettings user={uInfo} handleLogout={handleLogout} updateName={updateName} />}
+                        {curPageType===23 && login && uInfo && <UserSettings user={uInfo} handleLogout={handleLogout} updateName={updateName} updateTheme={updateTheme} />}
                         <Products 
                             items={productsItems} 
                             updateCart={updateCartContent} 

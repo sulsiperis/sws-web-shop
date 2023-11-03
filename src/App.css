@@ -468,8 +468,8 @@ body {
 }
 
 .user-admin {
-  color: #d65b09;
-  text-decoration: underline;
+  color:rgba(139, 9, 9, 1);;
+  font-size: 0.7rem;
 }
 /************ Orders history ************/
 .orders_wrapper {
@@ -524,4 +524,15 @@ body {
 .user-settings-title {
   font-size: 1rem;
   font-weight: 800;
+}
+
+.theme-form label {
+  margin-right: 8px;
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+.user-settings-username {
+  border: 1px solid #000;
+  border-radius: 6px; 
+  padding: 0px 3px 0px 3px;
 }
