@@ -458,7 +458,6 @@ body {
   color: #d65b09;
   text-decoration: underline;
 }
-
 /************ Orders history ************/
 .orders_wrapper {
   display: table;
@@ -485,4 +484,15 @@ body {
 .orders_table tbody {
   font-size: 14px;
   color: rgb(58, 56, 45, 1);
+}
+
+/****** User settings page *********/
+.settings-inputs {
+  display: inline-flex;
+  flex-direction: column; 
+  gap: 6px;
+  
+}
+.btn-red {
+  color: rgb(139, 9, 9);
 }
