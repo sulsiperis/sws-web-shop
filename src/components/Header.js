@@ -11,7 +11,7 @@ export default function Header(props) {
                 </div>
                 
                 { props.login && props.loggedInName && 
-                    <div className="header-hello">Hello, {props.loggedInName.split('%')[0]}</div> 
+                    <div className="header-hello">Hello, {props.loggedInName}</div> 
                 }
             </div>     
         </div>

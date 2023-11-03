@@ -88,7 +88,7 @@ export default function LoginSignup(props) {
                         if(querySnap.length > 0) {
                             alert("Email already exists!")
                         } else {
-                            const checkPassw = async() => {
+                            const hashPassw = async() => {
                                 const passwHash = await bcrypt.hash(signupData.passw, saltRounds)
                                 if(passwHash) {
                                     const docRef = async() => await addDoc(collection(db, "sws-users"), {
@@ -114,7 +114,7 @@ export default function LoginSignup(props) {
                                     //clear signupdata and hide signup block
                                 }
                             }
-                            checkPassw()
+                            hashPassw()
                         }
 
                     }

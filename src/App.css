@@ -18,17 +18,30 @@ body {
     ); */  
 }
 
-
+/********* intro page  *********/
 .intro-title {
   cursor: pointer;
   padding: 12px;
   display: flex;  
   justify-content: center;
+  text-align: center;
+  font-size: 6vw;
+  font-weight: 800;
 }
-.intro-title:hover {
-  
+.intro-title:hover {  
   text-decoration: underline dotted 1px;
 }
+.intro-content {
+  display: flex;
+  justify-content: center;
+}
+.intro-logo {
+  cursor: pointer;
+  width: 24vw;
+  min-width: 140px;
+}
+
+
 .main-wrapper {
   height: 100vh;
   width: 100%;
@@ -450,7 +463,7 @@ body {
 .userinfo span, .user-settings span  {
   font-weight: 800;
 }
-.userinfo p, .user-settings p {
+.userinfo p {
   padding-block: 4px;
 }
 
@@ -495,4 +508,20 @@ body {
 }
 .btn-red {
   color: rgb(139, 9, 9);
+}
+.usersettings-block {
+  border-bottom: 1px solid #000;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  
+}
+.user-settings {
+  margin-top: 12px;
+}
+.user-settings p {
+    padding-top: 6px;
+}
+.user-settings-title {
+  font-size: 1rem;
+  font-weight: 800;
 }

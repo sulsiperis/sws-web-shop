@@ -399,6 +399,15 @@ export default function Content(props) {
         contactsUid && setCurrentPage(contactsUid)        
     }
 
+    function updateName(newName) {
+        setUInfo(val => {
+            return {
+                ...val,
+                name: newName
+            }
+        })
+    }
+
     return (
         <div className="main-wrapper">
             <div className="main">
@@ -416,7 +425,7 @@ export default function Content(props) {
                         menuShowHide={menuShowHide}
                         login={loginCheck}
                         contacts={contactsPage}
-                        loggedInName={cookies.user}
+                        loggedInName={uInfo?.name}
                     />            
                     <div className="content">
                         {showCart && <ContentCart updateCart={updateCartContent} cartDetails={cartTotals} />}
@@ -425,7 +434,7 @@ export default function Content(props) {
                         {curPageType===999999 && <LoginSignup handleLogin={handleLogin} handleCookie={handleCookie} users={users} />}
                         {curPageType===100 && <TextPage pages={pages} id={currentPage} />}
                         {curPageType===21 && login && uInfo && <UserInfo user={uInfo} handleLogout={handleLogout} prod={allProducts} />}
-                        {curPageType===23 && login && uInfo && <UserSettings user={uInfo} handleLogout={handleLogout} />}
+                        {curPageType===23 && login && uInfo && <UserSettings user={uInfo} handleLogout={handleLogout} updateName={updateName} />}
                         <Products 
                             items={productsItems} 
                             updateCart={updateCartContent} 
