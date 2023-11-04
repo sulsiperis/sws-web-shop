@@ -12,7 +12,7 @@ import {
     getDocs, //returns docs with given query
   } from "firebase/firestore"
 import { db } from "../firebase"
-import bcrypt from "bcryptjs-react"; //passw encryption
+import bcrypt from "bcryptjs-react" //passw encryption
 
 //const bcrypt = require('bcryptjs');
 const saltRounds = 12;

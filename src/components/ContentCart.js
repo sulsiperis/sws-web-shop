@@ -1,7 +1,9 @@
 export default function ContentCart(props) {
     function viewCart() {
-        const storage = JSON.parse(localStorage.getItem("cart"));
-        console.log(storage)
+        //const storage = JSON.parse(localStorage.getItem("cart"))
+        //      console.log(storage)
+        
+        props.cartPage()
     }
     function clearStorage() {
         localStorage.clear()

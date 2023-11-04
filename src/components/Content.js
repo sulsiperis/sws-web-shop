@@ -9,6 +9,7 @@ import LoginSignup from "../pages/LoginSignup";
 import TextPage from "../pages/TextPage";
 import UserInfo from "../pages/UserInfo";
 import UserSettings from "../pages/UserSettings";
+import Cart from "../pages/Cart";
 
 
 import { 
@@ -182,7 +183,7 @@ export default function Content(props) {
             
         } else {
             const userPagesFiltered = pagesRaw.filter(page => (page.type_id !== 21) && 
-                                                    (page.type_id !== 22) && 
+                                                   // (page.type_id !== 22) && 
                                                     (page.type_id !== 23) && 
                                                     (page.type_id !== 24) &&
                                                     (page.type_id !== 2)
@@ -217,7 +218,7 @@ export default function Content(props) {
         if (curPageType === 200) {
             const curentPageArr = pages.filter(page => (page.uid === currentPage))
 
-            curentPageArr[0].options.type === "category" && setCurrentCat(curentPageArr[0].options.category_id)
+            curentPageArr[0].options.type === "category" && setCurrentCat(curentPageArr[0]?.options.category_id)
         } else {
             setCurrentCat(false)
             setProductsItems([])
@@ -399,6 +400,23 @@ export default function Content(props) {
         contactsUid && setCurrentPage(contactsUid)        
     }
 
+    //when "view cart" is pressed on card notifier
+    function cartPage() {
+        const cartObj =  getPagesOfType(22)
+        cartObj.length>0 && setCurrentPage(cartObj[0].uid)
+    }
+
+    //prototype func for redirecting to specific page
+    //@param pageId - go to page with provided id
+    //@param typeId - go to first page of typeId
+    //@param optionType - go to first page of optionType
+    //At least one param must be specified. Otherwise will redirect 
+    //to first child and if there is no childs - to home page.
+    
+    function goToPage(pageId="", typeId=null, optionType="") {
+
+    }
+
     function updateName(newName) {
         setUInfo(val => {
             return {
@@ -437,13 +455,36 @@ export default function Content(props) {
                         loggedInName={uInfo?.name}
                     />            
                     <div className="content">
-                        {showCart && <ContentCart updateCart={updateCartContent} cartDetails={cartTotals} />}
+                        {showCart && <ContentCart 
+                                        updateCart={updateCartContent} 
+                                        cartDetails={cartTotals} 
+                                        cartPage={cartPage} 
+                                    />}
                         <div className="content-title"><span>{ContentTitle()}</span></div>
                         
-                        {curPageType===999999 && <LoginSignup handleLogin={handleLogin} handleCookie={handleCookie} users={users} />}
+                        {curPageType===999999 && <LoginSignup 
+                                                    handleLogin={handleLogin} 
+                                                    handleCookie={handleCookie} 
+                                                    users={users} 
+                                                />}
                         {curPageType===100 && <TextPage pages={pages} id={currentPage} />}
-                        {curPageType===21 && login && uInfo && <UserInfo user={uInfo} handleLogout={handleLogout} prod={allProducts} />}
-                        {curPageType===23 && login && uInfo && <UserSettings user={uInfo} handleLogout={handleLogout} updateName={updateName} updateTheme={updateTheme} />}
+                        {curPageType===21 && login && uInfo && <UserInfo 
+                                                                    user={uInfo} 
+                                                                    handleLogout={handleLogout} 
+                                                                    prod={allProducts} 
+                                                                />}
+                        {curPageType===22 && <Cart 
+                                                user={uInfo} 
+                                                prod={allProducts} 
+                                                login={login}
+                                                pageChange={pageChange}
+                                            />}
+                        {curPageType===23 && login && uInfo && <UserSettings 
+                                                                    user={uInfo} 
+                                                                    handleLogout={handleLogout} 
+                                                                    updateName={updateName} 
+                                                                    updateTheme={updateTheme} 
+                                                                />}
                         <Products 
                             items={productsItems} 
                             updateCart={updateCartContent} 

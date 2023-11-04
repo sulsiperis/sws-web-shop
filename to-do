@@ -17,8 +17,9 @@
 //17. load user data for info page and hold in state on login +
 18. Fix category item click on currentCat while showing single product
 19. Cart design fix when showing single product
-20. Fix load orders bug when first logging in and showing userInfo page (orders doesn't appeas due to some bug w/ async) +
+//20. Fix load orders bug when first logging in and showing userInfo page (orders doesn't appeas due to some bug w/ async) +
 21. Admin can make other users admins
+22. Fix bug when clicking view cart from category
 
 ---------------
 localStorage:
