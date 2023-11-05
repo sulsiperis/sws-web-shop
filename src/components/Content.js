@@ -478,6 +478,7 @@ export default function Content(props) {
                                                 prod={allProducts} 
                                                 login={login}
                                                 pageChange={pageChange}
+                                                updateCart={updateCartContent} 
                                             />}
                         {curPageType===23 && login && uInfo && <UserSettings 
                                                                     user={uInfo} 

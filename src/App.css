@@ -494,7 +494,7 @@ body {
 .orders_table {  
   border-collapse: collapse;
 }
-.orders_table tbody {
+.orders_table tbody, .orders_table tfoot {
   font-size: 14px;
   color: rgb(58, 56, 45, 1);
 }
@@ -538,3 +538,21 @@ body {
 }
 
 /******** Cart page ********/
+
+.cart {
+  display: inline-flex;
+  flex-direction: column;
+  padding-top: 16px;
+}
+
+.cart-footer {
+  display: flex;
+  padding-top: 16px;
+  justify-content: end;
+}
+.cart-message {
+  color:rgba(139, 9, 9, 1);
+  font-weight: 600;
+  font-size: 1rem;
+  padding-bottom: 12px;
+}

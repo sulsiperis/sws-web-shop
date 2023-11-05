@@ -15,8 +15,12 @@ import { db } from "../firebase"
 
 export default function Cart(props) {
     const [products, setProducts] = React.useState([])
+    const [postPurchase, setPostPurchase] = React.useState(false)
     const storage = JSON.parse(localStorage.getItem("cart"))
-    const text = props.login?"purchase":"Please, login or create new account"
+    const message = props.login?
+                    postPurchase?"Thank you for buying from our web shop!":
+                    !storage?"Cart is empty":""
+                :!storage?"Cart is empty":"Please, login or create new account to purchase."
     let grandTotal=0
 
     React.useEffect(() => { 
@@ -33,11 +37,40 @@ export default function Cart(props) {
         getAll()        
     }, [])
 
-    console.log("storage", storage)
-    console.log("prodsp", products)
+    //console.log("storage", storage)
+    //console.log("prodsp", products)
+    //console.log(props.user.id)
 
     function removeFromCart(itemId) {
-        console.log(storage.filter(item => item.itemId === itemId))
+        //console.log(storage.filter(item => item.itemId === itemId))
+        const oldStorage = JSON.parse(localStorage.getItem("cart"));        
+                
+        const newStorage = oldStorage.filter(item => item.itemId !== itemId)
+        localStorage.setItem("cart", JSON.stringify(newStorage))
+        props.updateCart(newStorage)
+
+        newStorage.length<1&&emptyCart()
+    }
+
+    function handlePurchase() {
+        storage.forEach(element => {
+            const docRef = async() => await addDoc(collection(db, "sws-orders"), {
+                user_id: props.user.id,
+                quantity: element.quantity,
+                price: products.filter(prod => (prod.id === element.itemId))?.[0].price,
+                item_id: element.itemId,
+                date: new Date()
+                
+            })
+            docRef() 
+        })
+        setPostPurchase(true)
+        emptyCart()
+    }
+
+    function emptyCart() {
+        localStorage.clear()
+        props.updateCart(null)
     }
 
     function getCartItems() {
@@ -46,7 +79,7 @@ export default function Cart(props) {
         if (storage?.length>0) {
             cartItems =
                 <> 
-                    <table border={1}>
+                    <table className="orders_table">
                         <thead>
                             <tr>
                                 <td></td>
@@ -93,7 +126,7 @@ export default function Cart(props) {
                             <td></td>                                    
                             <td>To pay:</td>
                             <td>{parseFloat(grandTotal.toFixed(2))}</td>
-                            <td></td>                               
+                            <td>{props.login && storage?.length>0 && <button className="btn" onClick={handlePurchase}>Purchase</button>}</td>                               
                         </tr>
 
                         </tfoot>
@@ -102,16 +135,21 @@ export default function Cart(props) {
                 </>
         }
         grandTotal = 0
-       // console.log(cartItems)
+        //console.log(storage)
         return cartItems
     }
 
     
     return (
         <div className="cart">
+            <div className="cart-message">
+                 {message}
+            </div>
             {getCartItems()}
-            {storage?.length>0?text:"Cart is empty."}
-            {props.login && <button className="btn">Purchase</button>}
+            <div className="cart-footer">
+                {props.login && storage?.length>0 &&<button className="btn" onClick={emptyCart}>Empty cart</button>}
+                
+            </div>
 
         </div>
     )
