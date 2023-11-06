@@ -102,7 +102,7 @@ body {
 }
 .header-title {
   display: flex;
-  font-size: 4vw;
+  font-size: clamp(14px, 2vw ,40px);
   font-weight: 800;
   margin-left: 12px;
   margin-right: 12px;
@@ -506,7 +506,7 @@ body {
   gap: 6px;
   
 }
-.btn-red {
+.txt-red {
   color: rgb(139, 9, 9);
 }
 .usersettings-block {
@@ -555,4 +555,18 @@ body {
   font-weight: 600;
   font-size: 1rem;
   padding-bottom: 12px;
+}
+/***** Editor *****/
+.editor-txt {
+  margin-top: 12px;
+}
+.editor-txt input, .editor-txt textarea {
+  display: flex;
+  flex-direction: column;
+  margin-block: 8px;
+}
+.editor-content {
+  width: clamp(240px, 60vw, 800px);
+  height: auto;
+  min-height: 200px;
 }

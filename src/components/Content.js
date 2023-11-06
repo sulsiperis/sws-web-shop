@@ -434,6 +434,9 @@ export default function Content(props) {
             }
         })
     }
+    function updateDelUsers(userId) {
+        setUsers(users.filter(usr => usr.id !== userId))
+    }
 
     return (
         <div className="main-wrapper">
@@ -467,7 +470,7 @@ export default function Content(props) {
                                                     handleCookie={handleCookie} 
                                                     users={users} 
                                                 />}
-                        {curPageType===100 && <TextPage pages={pages} id={currentPage} />}
+                        {curPageType===100 && <TextPage pages={pages} id={currentPage} user={uInfo} />}
                         {curPageType===21 && login && uInfo && <UserInfo 
                                                                     user={uInfo} 
                                                                     handleLogout={handleLogout} 
@@ -481,10 +484,12 @@ export default function Content(props) {
                                                 updateCart={updateCartContent} 
                                             />}
                         {curPageType===23 && login && uInfo && <UserSettings 
-                                                                    user={uInfo} 
+                                                                    user={uInfo}
+                                                                    users={users} 
                                                                     handleLogout={handleLogout} 
                                                                     updateName={updateName} 
-                                                                    updateTheme={updateTheme} 
+                                                                    updateTheme={updateTheme}
+                                                                    updateDelUsers={updateDelUsers}
                                                                 />}
                         <Products 
                             items={productsItems} 

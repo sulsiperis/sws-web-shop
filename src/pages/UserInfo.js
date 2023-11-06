@@ -81,7 +81,7 @@ export default function UserInfo(props) {
                 
             : ordersComp
             }
-            {Array.isArray(orders) && <p><button className="btn">Clear order data</button></p>}
+            {/* {Array.isArray(orders) && <p><button className="btn">Clear order data</button></p>} */}
         </div>
     )
     

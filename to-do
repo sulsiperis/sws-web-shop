@@ -21,6 +21,7 @@
 21. Admin can make other users admins
 22. Fix bug when clicking view cart from category
 23. bug fix clear orders alert happens as many times as orders were deleted
+24. update stock after successful purchase
 
 ---------------
 localStorage:

@@ -13,10 +13,13 @@ import {
   } from "firebase/firestore"
 import { db } from "../firebase"
 import bcrypt from "bcryptjs-react"; //passw encryption
+import { nanoid } from "nanoid";
 const saltRounds = 12;
 
 export default function UserSettings(props) { 
     const [themeData, setThemeData] = React.useState(props.user.color_theme)
+    const [levelData, setLevelData] = React.useState({})
+
     
     const oldpassInputRef = useRef(null)
     const passInputRef = useRef(null)
@@ -24,6 +27,17 @@ export default function UserSettings(props) {
     const newNameInputRef = useRef(null)
     const delUserInputRef = useRef(null)
 
+    React.useEffect(()=> {
+        let newObj = {}
+        props.users.map(usr => {
+            return (
+                newObj[usr.id] = usr.level                
+            )
+        })
+        setLevelData(newObj)
+    },[])
+
+    
 
     async function updatePassw(newPassw) {
         const passwHash = await bcrypt.hash(newPassw, saltRounds)
@@ -46,6 +60,8 @@ export default function UserSettings(props) {
         
     }
     
+    
+
     const handleChangePassw = (event) => {
         event.preventDefault()
     
@@ -109,11 +125,13 @@ export default function UserSettings(props) {
 
     }
 
-    async function handleClearOrders(msg=true) {
+    //clears orders of current user by default or provided user id @param userId
+    //@param msg triggers alert messages about progress if true
+    async function handleClearOrders(msg=true, userId="") {
         if (!msg || window.confirm("Are you sure to delete all orders data?")) {
 
             //delete orders 
-            const q = query(collection(db, "sws-orders"), where("user_id", "==", props.user.id))
+            const q = query(collection(db, "sws-orders"), where("user_id", "==", userId?userId:props.user.id))
             try {
                 const querySnapshot = await getDocs(q)
                 if (querySnapshot.docs.length>0) {
@@ -180,6 +198,104 @@ export default function UserSettings(props) {
         }
         cp()
     }
+    function changeLevel(event, userId) {
+        event.preventDefault()
+
+        const updateLvl = async() => {
+            const userRef = doc(db, "sws-users", userId)
+            await updateDoc(userRef, { level: Number(levelData[userId]) })
+        }
+        updateLvl().then((err) => err?alert("User's level not changed. Error: " + err):alert("User's level successfully changed!"))
+
+    }
+    function handleChangeLevel(event, userId) {
+        event.preventDefault()
+        setLevelData(oldVal => ({
+            ...oldVal,
+            [userId] : event.target.value
+        }))
+    }
+    function deleteUser(userId) {
+        if (window.confirm("Are you sure to delete user \""+props.users.filter(u=> u.id===userId)[0].name+"\" and all related data?")) {
+            handleClearOrders(false, userId)
+            const dUsr = async() => {
+                await deleteDoc(doc(db, "sws-users", userId))
+            }
+            dUsr().then((err) => err?alert("Could not delete user beacuse error occured: " + err):props.updateDelUsers(userId))
+            
+        }
+    }
+
+
+    function AdminComp() {
+            const userTbl = 
+                <table className="orders_table">
+                    <thead>
+                        <tr>
+                            <td>Name</td>
+                            <td>Email</td>
+                            <td>Last seen</td>                                    
+                            <td>Registered</td>
+                            <td>Level</td>
+                            <td></td>                               
+                        </tr>
+                    </thead>
+                    <tbody>
+                {
+                    props.users.map(usr => {
+                        let reg, last_seen, levelOptions = []
+                        if(usr.registration_date) {
+                            reg = usr.registration_date.toDate().toLocaleDateString()+ "  " +usr.registration_date.toDate().toLocaleTimeString()
+                        }
+                        if(usr.last_seen_date) {
+                            last_seen = usr.last_seen_date.toDate().toLocaleDateString()+ "  " +usr.last_seen_date.toDate().toLocaleTimeString()
+                        }
+                        for (let i=1;i<10;i++) {
+                            levelOptions.push(i)
+                        }                        
+                        return (
+                            <tr key={usr.id}>                        
+                                <td>{usr.name}</td>
+                                <td>{usr.email}</td>                                    
+                                <td>{last_seen}</td>
+                                <td>{reg}</td>
+                                <td>
+                                    <form name={"form_" + usr.id} onSubmit={(event) => changeLevel(event, usr.id)}>
+                                        <select 
+                                            name="level"
+                                            disabled={usr.id===props.user.id?true:false} 
+                                            value={levelData[usr.id]} 
+                                            onChange={(event) => handleChangeLevel(event, usr.id)}
+                                        >
+                                            {levelOptions.map(opt => <option key={nanoid()} value={opt}>{opt}</option>)}
+                                        </select>
+                                    
+                                    {/* {usr.level} */}
+                                    {usr.id !== props.user.id && <button className="btn" type="submit">OK</button>}
+                                    </form>
+                                </td>
+                                <td>{usr.id !== props.user.id && <button className="btn" onClick={() => deleteUser(usr.id)}>Delete</button>}</td>                                        
+                            </tr> 
+                        )
+                    })
+                }
+                    </tbody>                    
+                </table>
+
+            //console.log(props.users)
+        return (
+            <>
+                <p className="user-settings-title txt-red">Admin area:</p>
+                <p className="usersettings-block"></p>
+                <p className="user-settings-title">Users:</p>                
+                    
+                        {userTbl}
+                <p className="usersettings-block"></p>
+                
+            </>
+        )
+        
+    }
     
     return (
         <div className="user-settings">
@@ -205,7 +321,7 @@ export default function UserSettings(props) {
             <form name="changeNameForm" className="usersettings-form" onSubmit={handleChangeName} > 
                 <p className="usersettings-block">
                     <span className="settings-inputs">
-                        <input type="text" className="input" name="nname" placeholder="New name" ref={newNameInputRef} required />                        
+                        <input type="text" className="input" name="name" placeholder="New name" ref={newNameInputRef} required />                        
                         <button type="submit" className="btn">Confirm</button>
                         
                     </span>
@@ -260,18 +376,18 @@ export default function UserSettings(props) {
                     </span>
                 </p>    
             </form>            
-            <p className="user-settings-title">Delete user:</p>            
+            <p className="user-settings-title">Delete account:</p>            
             <form name="delUserForm" className="usersettings-form" onSubmit={handleDelUser} > 
                 <p className="usersettings-block">
                     <span className="settings-inputs">
                         <input type="password" className="input" name="passw" placeholder="Current password" ref={delUserInputRef} required />
-                        <button type="submit" className="btn btn-red">Delete</button>
+                        <button type="submit" className="btn txt-red">Delete</button>
                         
                     </span>
                 </p>
             </form>
             
-            
+            {props.user.level===1 && <AdminComp />}
             
         </div>
     )
