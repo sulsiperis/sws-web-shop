@@ -25,11 +25,13 @@ export default function Menu(props) {
         }
         return ( 
             <span key={page.uid}>
-            <p
-                
-               onClick={() => props.selectPage(page.uid)}
-               className={props.currentPage===page.uid?"selected":"" }
-            >{page.title}{hasChildren && " ⯆"}</p>
+                <p                
+                onClick={() => props.selectPage(page.uid)}
+                className={props.currentPage===page.uid?"selected":"" }
+                >{page.title}{hasChildren && " ⯆"}</p>
+                {(props.user?.level===1) && 
+                    ((page.type_id === 100) || (page.type_id === 200)) && 
+                    <span className="add indent-left" onClick={() => props.addNewPage(page.uid)} >+</span> }
             
             {hasChildren && pagesLvl2}
             
@@ -41,7 +43,7 @@ export default function Menu(props) {
     return (
         <div className="menu">
             {pagesLvl1}
-           
+            {props.user?.level===1 && <span className="add" onClick={() => props.addNewPage()} >+</span> }
         </div>
     )
     

@@ -1,16 +1,15 @@
-import React from "react";
+import React from "react"
 import Header from "./Header"
 import Footer from "./Footer"
 import Menu from "./Menu"
-import ContentCart from "./ContentCart";
+import ContentCart from "./ContentCart"
 //pages:
-import Products from "../pages/Products";
-import LoginSignup from "../pages/LoginSignup";
-import TextPage from "../pages/TextPage";
-import UserInfo from "../pages/UserInfo";
-import UserSettings from "../pages/UserSettings";
-import Cart from "../pages/Cart";
-
+import Products from "../pages/Products"
+import LoginSignup from "../pages/LoginSignup"
+import TextPage from "../pages/TextPage"
+import UserInfo from "../pages/UserInfo"
+import UserSettings from "../pages/UserSettings"
+import Cart from "../pages/Cart"
 
 import { 
     collection,
@@ -26,9 +25,10 @@ import {
     FieldPath
   } from "firebase/firestore"
 import { db } from "../firebase"
-import dbQuery from "../functions/dbQuery";
-import ImageGallery from "react-image-gallery";
-import { useCookies } from "react-cookie";
+import dbQuery from "../functions/dbQuery"
+import ImageGallery from "react-image-gallery"
+import { useCookies } from "react-cookie"
+import { nanoid } from "nanoid"
 
 export default function Content(props) {
     
@@ -48,6 +48,7 @@ export default function Content(props) {
     const [login, setLogin] = React.useState(false)
     const [uInfo, setUInfo] = React.useState()
     const [users, setUsers] = React.useState()
+    const [reloadPages, setReloadPages] =React.useState(false)
 
     const [cookies, setCookie, removeCookie] = useCookies(["user"]);
      
@@ -106,6 +107,7 @@ export default function Content(props) {
 
     //pages hook:
     React.useEffect(() => {
+       
         cookies.user && setLogin(true)
         const fetchData = async () => {
             const cdata = await dbQuery("sws-pages", db, true)
@@ -114,13 +116,11 @@ export default function Content(props) {
                 uid: pg.id
             }))
             setPagesRaw(nArr)
-            
-         
         }
         fetchData()
+        reloadPages && setReloadPages(false)
         
-        
-    }, [])
+    }, [reloadPages])
 
     //cookie auto expiration hook
     React.useEffect(() => {
@@ -165,6 +165,9 @@ export default function Content(props) {
         if (login) {    
             setPages(pagesRaw)
 
+            ////////////////////////////////////
+            //console.log("pages reloades")
+
             const getUserInfo = async() => {
                 const userData = await dbQuery("sws-users", db, false, ["__name__", "==", cookies.user.split("%")[1]])
                 if (userData[0]) {
@@ -189,6 +192,8 @@ export default function Content(props) {
                                                     (page.type_id !== 2)
                                                 )
             setPages(userPagesFiltered)
+
+            
         }
         
     }, [login, pagesRaw])
@@ -275,7 +280,7 @@ export default function Content(props) {
         try {
             const querySnapshot = await getDocs(q)
             return querySnapshot.docs[0].data().price 
-        } catch (err) {                
+        } catch (err) {
             console.log("ERROR!: " + err)        
             return false
         }
@@ -438,6 +443,28 @@ export default function Content(props) {
         setUsers(users.filter(usr => usr.id !== userId))
     }
 
+    function addNewPage(parentId="") {
+        const tempId = "new_"+nanoid()
+        let nArr = pagesRaw
+        nArr.push({
+            uid: tempId,
+            type_id: 100,
+            title: "!new_page",
+            parent_id: parentId,
+            order: 999999,
+            options: {},
+            content: ""
+        })
+        setPagesRaw(nArr)
+        setCurrentPage(tempId)
+    }
+  
+    function triggerReloadPages() {
+        setReloadPages(true)
+    }
+    //11111111111111111111
+    //console.log(pages)
+
     return (
         <div className="main-wrapper">
             <div className="main">
@@ -448,6 +475,8 @@ export default function Content(props) {
                     selectPage={pageChange}
                     pages={pages}
                     getChildren={getChildren}
+                    user={uInfo}
+                    addNewPage={addNewPage}
                 />}
                 <div className="g1">
                     <Header 
@@ -470,11 +499,16 @@ export default function Content(props) {
                                                     handleCookie={handleCookie} 
                                                     users={users} 
                                                 />}
-                        {curPageType===100 && <TextPage pages={pages} id={currentPage} user={uInfo} />}
+                        {curPageType===100 && <TextPage 
+                                                    pages={pages} 
+                                                    id={currentPage} 
+                                                    user={uInfo} 
+                                                    triggerReloadPages={triggerReloadPages}
+                                                />}
                         {curPageType===21 && login && uInfo && <UserInfo 
                                                                     user={uInfo} 
                                                                     handleLogout={handleLogout} 
-                                                                    prod={allProducts} 
+                                                                    prod={allProducts}                                                                    
                                                                 />}
                         {curPageType===22 && <Cart 
                                                 user={uInfo} 
@@ -491,14 +525,18 @@ export default function Content(props) {
                                                                     updateTheme={updateTheme}
                                                                     updateDelUsers={updateDelUsers}
                                                                 />}
-                        <Products 
+                        {curPageType===200 && <Products 
                             items={productsItems} 
                             updateCart={updateCartContent} 
                             currentPage={currentPage}
                             currentCat={currentCat}
                             showProduct={showProduct}
                             setShowProduct={(prodObj) => setShowProduct(prodObj)}
-                        />
+                            pages={pages}
+                            triggerReloadPages={triggerReloadPages}
+                            user={uInfo}
+
+                        />}
                     </div>
                 </div>
             </div>
