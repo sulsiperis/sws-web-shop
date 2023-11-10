@@ -4,7 +4,7 @@ export default function Menu(props) {
     pagesLvl1Arr = props.pages && props.pages.filter(page => (page.type_id < 999999) && !page.parent_id)
     pagesLvl1Arr.sort(function (a, b) {return a.order - b.order});
     
-
+    
     const pagesLvl1 = pagesLvl1Arr.map(page => {
         let hasChildren = false, pagesLvl2, pages = [] 
         const pagesLvl2Arr = props.getChildren(page.uid)        

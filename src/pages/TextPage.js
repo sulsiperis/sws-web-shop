@@ -16,10 +16,10 @@ import { db } from "../firebase"
 export default function TextPage(props) {
     const nArr = props.pages.filter(page => (page.uid === props.id))
     const [formData, setFormData] = React.useState({
-        "title": nArr[0]?.title,
-        "content": nArr[0]?.content,
-        "order": nArr[0]?.order,
-        "type_id": nArr[0]?.type_id
+        "title": "",
+        "content": "",
+        "order": null,
+        "type_id": null
     })
 
     React.useEffect(() => {
@@ -53,7 +53,7 @@ export default function TextPage(props) {
                         await updateDoc(pageRef, { 
                             title: formData.title, 
                             content: formData.content, 
-                            order: formData.order 
+                            order: parseInt(formData.order, 10)
                         })
                     }
 
@@ -65,14 +65,42 @@ export default function TextPage(props) {
                 //new page
             } else {
                 
-                const newPageArr = props.pages[props.pages.length-1]
-                delete newPageArr.uid
+                /* const newPageArr = props.pages[props.pages.length-1]
+                delete newPageArr.uid */
+                const newPageArr = {
+                    type_id: parseInt(formData.type_id, 10),
+                    options: {},
+                    order: parseInt(formData.order, 10),
+                    parent_id: props.pages[props.pages.length-1].parent_id,
+                    title: formData.title,
+                    content: formData.content
+                }
 
-                console.log("new Page", newPageArr)
 
-                const addPage = async() => await addDoc(collection(db, "sws-pages"), newPageArr)
-                addPage().then((err) => err?alert("Page NOT created. Error: " + JSON.stringify(err)):alert("New page created!"))
-                .then(props.triggerReloadPages())
+                //console.log("new Page", newPageArr)
+                let newId = ""
+                const addPg = async() => await addDoc(collection(db, "sws-pages"), newPageArr)
+                addPg().then((res) => {
+                    if (!res.id) {
+                        alert("DB error. Page NOT created!")
+                    } else {
+                        props.triggerReloadPages()
+                        newId = res.id  
+                       // console.log(newId, "nid1")
+                        props.pageChange(newId)
+                        alert("New page created successfully.")                              
+                    }
+                })
+                .then(
+                   // console.log(newId, "nid")
+                   // props.pageChange(newId)
+                   /*  setTimeout(() => {
+                        props.pageChange(newId)
+                    }, 2000) */
+                    
+                )
+                //.then(alert("New page created successfully."))
+                
             }
 
         }
@@ -106,6 +134,7 @@ export default function TextPage(props) {
                 delPage().then((err) => err?
                     alert("Could not delete page. Error: " + err):alert("Page successfully deleted!"))
                     .then(props.triggerReloadPages())
+                    .then(props.pageChange(props.getPagesOfType(21)[0].uid))
                     
 
             } catch (err) {                
@@ -140,8 +169,8 @@ export default function TextPage(props) {
             </form>
         </div>
         :
-        <div>
-            {nArr && nArr[0].content}
+        <div>            
+            {nArr && nArr[0]?.content}
         </div>
     )
 }

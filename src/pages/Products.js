@@ -26,9 +26,9 @@ export default function Products(props) {
 
     React.useEffect(() => {
         setFormData({
-            "title": nArr[0].title,
-            "content": nArr[0].content,
-            "order": nArr[0].order,
+            "title": nArr[0]?.title,
+            "content": nArr[0]?.content,
+            "order": nArr[0]?.order,
             "type_id": nArr[0]?.type_id
         })
     }, [props.currentPage])

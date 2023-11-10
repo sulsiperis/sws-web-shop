@@ -62,7 +62,9 @@ export default function Cart(props) {
                 date: new Date()
                 
             })
-            docRef() 
+            docRef().then((res) => !res.id?
+                alert("Error adding order data to db!" + JSON.stringify(res)):
+                alert("Order created successfully."))
         })
         setPostPurchase(true)
         emptyCart()

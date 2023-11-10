@@ -29,7 +29,7 @@ export default function Product(props) {
         )
     }
     function handlePlus() {
-        window.scrollTo({top: 0, left: 0, behavior: 'smooth' })
+       
         setQuantity(oldVal => 
             oldVal>=props.prod.stock?props.prod.stock:Number(oldVal)+1
         )

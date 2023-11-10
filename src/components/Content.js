@@ -116,9 +116,13 @@ export default function Content(props) {
                 uid: pg.id
             }))
             setPagesRaw(nArr)
+
+           // console.log("reload triggered", nArr)
+
         }
-        fetchData()
-        reloadPages && setReloadPages(false)
+        fetchData().then((err) => err?
+            alert('error connecting to db'):
+            reloadPages && setReloadPages(false))
         
     }, [reloadPages])
 
@@ -201,19 +205,15 @@ export default function Content(props) {
     //page type hook
     React.useEffect(() => {
 
-        //method with checking type directly with db
-        const getTypeDb = async () => {
-            const pType = await getPageType(currentPage)            
-            setCurPageType(pType)          
-        }
         //getTypeDb()
-        //method with checking type from preloaded state of pages array        
+        //method with checking type from preloaded state of pages array     
+        
         const getType = () => {
             const pType = getPageType(currentPage)            
             setCurPageType(pType)     
         }
-        getType()       
-    }, [currentPage])
+        getType()
+    }, [currentPage, reloadPages])
 
 
     //product gallery hook and special pages redirection by type:
@@ -315,33 +315,26 @@ export default function Content(props) {
         setCartContent(content)
     }
 
-
-    async function getPageTypeFromDb(id) {
-        if (id) {
-            const qData = await dbQuery("sws-pages", db, false, ["__name__", "==", id])
-            
-            return qData[0].data().type_id
-        } else {
-            return false
-        }
-    }
     function getPageType(id) {
         if (id) {
+           // console.log("current page: ", currentPage, "curr page type: ", curPageType)
             const qData = pagesRaw.filter(page => (page.uid === id))
-         
-            return qData[0].type_id
+            if (qData.length>0) { 
+                return qData[0].type_id 
+            }
+            else {
+              //  console.log("page type not found")
+              /*   setTimeout(() => {
+                    getPageType(id)
+                }, 400) */
+                
+                
+            }
         } else {
             return false
         }
     }
-    async function getPagesOfTypeFromDb(typeId) {
-        if (typeId) {
-            const qData = await dbQuery("sws-pages", db, false, ["type_id", "==", typeId])
-            return qData
-        } else {
-            return false
-        }
-    }
+
     function getPagesOfType(typeId) {
         if (typeId) {
             const qData = pagesRaw.filter(page => (page.type_id === typeId))
@@ -460,10 +453,19 @@ export default function Content(props) {
     }
   
     function triggerReloadPages() {
+        //11111111111111111111
+    //console.log("reload pages triggered")
         setReloadPages(true)
     }
-    //11111111111111111111
-    //console.log(pages)
+
+    function findMaxCatId() {
+        const cats = pages.filter(page => page.options.type==="category")
+        const max = cats.reduce((prev, current) => (prev && prev.options.category_id > current.options.category_id) ? prev : current, null)
+        return max.options.category_id
+    }
+    
+   // console.log("current page: ", currentPage, "curr page type: ", curPageType)
+   // console.log("pages raw: ", pagesRaw)
 
     return (
         <div className="main-wrapper">
@@ -487,6 +489,9 @@ export default function Content(props) {
                         loggedInName={uInfo?.name}
                     />            
                     <div className="content">
+                        {/* test */}
+                    {/* <button onClick={findMaxCatId}>cat</button> */}
+
                         {showCart && <ContentCart 
                                         updateCart={updateCartContent} 
                                         cartDetails={cartTotals} 
@@ -504,6 +509,8 @@ export default function Content(props) {
                                                     id={currentPage} 
                                                     user={uInfo} 
                                                     triggerReloadPages={triggerReloadPages}
+                                                    pageChange={pageChange}
+                                                    getPagesOfType={getPagesOfType}
                                                 />}
                         {curPageType===21 && login && uInfo && <UserInfo 
                                                                     user={uInfo} 
