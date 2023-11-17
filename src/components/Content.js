@@ -302,10 +302,10 @@ export default function Content(props) {
     }
 
     //when single product item clicked
-    
+    //console.log(Number((3.14157862478).toFixed(2))+100)
     
     function pageChange(id) {
-       
+        setShowProduct() //hides product when menu item clicked
         setCurrentPage(id)
     }
     function menuShowHide() {
@@ -453,7 +453,6 @@ export default function Content(props) {
     }
   
     function triggerReloadPages() {
-        //11111111111111111111
     //console.log("reload pages triggered")
         setReloadPages(true)
     }
@@ -464,6 +463,100 @@ export default function Content(props) {
         return max.options.category_id
     }
     
+      //saves page or creates a new one
+    function savePage(event, formData) {
+        event.preventDefault()
+        const pageExist = async() => {
+            const pagesArr =  await dbQuery("sws-pages", db, false, ["__name__", "==", currentPage])
+           // console.log(pagesArr)
+            //check if it's a new page or editing old one
+            if (pagesArr.length > 0) {
+                if ((formData.title !=="") && (formData.content!=="")) {
+                    const updateDb = async() => {
+                        const pageRef = doc(db, "sws-pages", currentPage)
+                        await updateDoc(pageRef, { 
+                            title: formData.title, 
+                            content: formData.content, 
+                            order: parseInt(formData.order, 10)
+                        })
+                    }
+                    //need to trigger pagesRaw state update after save
+
+                    updateDb().then((err) => err?alert("Content NOT changed. Error: " + err):alert("Content successfully changed!"))
+                    .then(triggerReloadPages())
+                }
+                //new page
+            } else {
+                
+                
+                const newPageArr = {
+                    type_id: parseInt(formData.type_id, 10),
+                    options: {},
+                    order: parseInt(formData.order, 10),
+                    parent_id: pages[pages.length-1].parent_id,
+                    title: formData.title,
+                    content: formData.content
+                }
+
+
+                //console.log("new Page", newPageArr)
+                let newId = ""
+                const addPg = async() => await addDoc(collection(db, "sws-pages"), newPageArr)
+                addPg().then((res) => {
+                    if (!res.id) {
+                        alert("DB error. Page NOT created!")
+                    } else {
+                        triggerReloadPages()
+                        newId = res.id  
+                       // console.log(newId, "nid1")
+                        pageChange(newId)
+                        alert("New page created successfully.")                              
+                    }
+                })               
+                
+            }
+
+        }
+        pageExist()
+    } 
+    
+    //deletes page and subpages. Need to implement deletion of the products
+    function deletePage(event) {
+        event.preventDefault()
+        if (window.confirm("Are you sure about deleting this page and all it's sub-pages?")) {
+            const pageRef = doc(db, "sws-pages", currentPage)            
+            const q = query(collection(db, "sws-pages"), where("parent_id", "==", currentPage))
+            try {
+                const getChilds = async() => {
+                    const childs = await getDocs(q)
+                    if (childs.docs.length>0) {                        
+                        childs.forEach((d) => {
+                            const childsRef = doc(db, "sws-pages", d.id)
+                            const dd = async() => {
+                                await deleteDoc(childsRef)
+                            }
+                            dd()                            
+                        })
+                    }
+                }
+                getChilds()
+                const delPage = async() => {
+                    await deleteDoc(pageRef)
+                }
+                delPage().then((err) => err?
+                    alert("Could not delete page. Error: " + err):alert("Page successfully deleted!"))
+                    .then(triggerReloadPages())
+                    .then(pageChange(getPagesOfType(21)[0].uid))
+                    
+
+            } catch (err) {                
+                    console.log("ERROR!: " + err)
+                    return false
+            }
+
+        }
+    } 
+
    // console.log("current page: ", currentPage, "curr page type: ", curPageType)
    // console.log("pages raw: ", pagesRaw)
 
@@ -511,6 +604,8 @@ export default function Content(props) {
                                                     triggerReloadPages={triggerReloadPages}
                                                     pageChange={pageChange}
                                                     getPagesOfType={getPagesOfType}
+                                                    handleSubmit={savePage}
+                                                    handleDeletePage={deletePage}
                                                 />}
                         {curPageType===21 && login && uInfo && <UserInfo 
                                                                     user={uInfo} 

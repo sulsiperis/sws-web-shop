@@ -39,8 +39,9 @@ export default function TextPage(props) {
         
         })
     }
- 
-    function handleSubmit(event) {
+    
+    //saves page or creates a new one
+   /*  function handleSubmit(event) {
         event.preventDefault()
         const pageExist = async() => {
             const pagesArr =  await dbQuery("sws-pages", db, false, ["__name__", "==", props.id])
@@ -65,8 +66,7 @@ export default function TextPage(props) {
                 //new page
             } else {
                 
-                /* const newPageArr = props.pages[props.pages.length-1]
-                delete newPageArr.uid */
+                
                 const newPageArr = {
                     type_id: parseInt(formData.type_id, 10),
                     options: {},
@@ -90,26 +90,18 @@ export default function TextPage(props) {
                         props.pageChange(newId)
                         alert("New page created successfully.")                              
                     }
-                })
-                .then(
-                   // console.log(newId, "nid")
-                   // props.pageChange(newId)
-                   /*  setTimeout(() => {
-                        props.pageChange(newId)
-                    }, 2000) */
-                    
-                )
-                //.then(alert("New page created successfully."))
+                })               
                 
             }
 
         }
         pageExist()
 
-        /*  */
-    }
 
-    function handleDeletePage(event) {
+    } */
+
+    //deletes page and subpages. Need to implement deletion of the products
+   /*  function handleDeletePage(event) {
         event.preventDefault()
         if (window.confirm("Are you sure to delete this page and all sub-pages?")) {
             const pageRef = doc(db, "sws-pages", props.id)            
@@ -143,13 +135,12 @@ export default function TextPage(props) {
             }
 
         }
-        //check if has children
-    }
+    } */
 
     return (
         props.user && props.user.level <4 ?
         <div className="editor-txt">
-            <form name="txt_page_form" onSubmit={(event) => handleSubmit(event)}>
+            <form name="txt_page_form" onSubmit={(event) => props.handleSubmit(event, formData)}>
                 <span>Page title:</span>
                 <input className="input" name="title" type="text" required onChange={handleChange} value={formData.title} />
                 <span>Page content:</span>
@@ -163,8 +154,8 @@ export default function TextPage(props) {
                     
                 </select>
                 <div className="editor-txt-buttons">
-                    <button type="submit" className="btn">Save</button> 
-                    <button className="btn txt-red" onClick={handleDeletePage}>Delete page</button>
+                    <button type="submit" className="btn txt-green">Save</button> 
+                    <button className="btn txt-red" onClick={(event) => props.handleDeletePage(event)}>Delete page</button>
                 </div>
             </form>
         </div>

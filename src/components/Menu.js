@@ -31,7 +31,7 @@ export default function Menu(props) {
                 >{page.title}{hasChildren && " ⯆"}</p>
                 {(props.user?.level===1) && 
                     ((page.type_id === 100) || (page.type_id === 200)) && 
-                    <span className="add indent-left" onClick={() => props.addNewPage(page.uid)} >+</span> }
+                    <span className="add indent-left txt-green" onClick={() => props.addNewPage(page.uid)} >+</span> }
             
             {hasChildren && pagesLvl2}
             
@@ -43,7 +43,7 @@ export default function Menu(props) {
     return (
         <div className="menu">
             {pagesLvl1}
-            {props.user?.level===1 && <span className="add" onClick={() => props.addNewPage()} >+</span> }
+            {props.user?.level===1 && <span className="add txt-green" onClick={() => props.addNewPage()} >+</span> }
         </div>
     )
     

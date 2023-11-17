@@ -1,6 +1,7 @@
 import React from "react";
 import Product from "../pages/Product";
 import dbQuery from "../functions/dbQuery"
+import { isUrl } from "../functions/files"
 import { 
     collection,
     addDoc, //adds collection to db
@@ -33,6 +34,8 @@ export default function Products(props) {
         })
     }, [props.currentPage])
 
+    
+
 /*     React.useEffect(() => {
         handleHideProduct()
     }, [props.currentPage, props.currentCat]) */
@@ -44,58 +47,7 @@ export default function Products(props) {
             )
         
         })
-    }
- 
-    function handleSubmit(event) {
-        event.preventDefault()
-        const pageExist = async() => {
-            const pagesArr =  await dbQuery("sws-pages", db, false, ["__name__", "==", props.currentPage])
-           // console.log(pagesArr)
-            //check if it's a new page or editing old one
-            if (pagesArr.length > 0) {
-                if ((formData.title !=="") && (formData.content!=="")) {
-                    const updateDb = async() => {
-                        const pageRef = doc(db, "sws-pages", props.currentPage)
-                        await updateDoc(pageRef, { 
-                            title: formData.title, 
-                            content: formData.content, 
-                            order: formData.order 
-                        })
-                    }
-
-                    //need to trigger pagesRaw state update after save
-
-                    updateDb().then((err) => err?alert("Content NOT changed. Error: " + err):alert("Content successfully changed!"))
-                    .then(props.triggerReloadPages())
-                }
-                //new page
-            } else {
-                
-                const newPageArr = props.pages[props.pages.length-1]
-                delete newPageArr.uid
-
-                console.log("new Page", newPageArr)
-
-                const addPage = async() => await addDoc(collection(db, "sws-pages"), newPageArr)
-                addPage().then((err) => err?alert("Page NOT created. Error: " + err):alert("New page created!"))
-                .then(props.triggerReloadPages())
-            }
-
-        }
-        pageExist()
-
-        /*  */
-    }
-
-    function handleDeletePage(event) {
-        event.preventDefault()
-        if (window.confirm("Are you sure to delete this page and all sub-pages?")) {
-            
-        }
-        //check if has children
-    }
-
-
+    }    
     function checkQuantity(itemId, quantityToAdd) {
         const oldStorage = JSON.parse(localStorage.getItem("cart"));
         let existed
@@ -130,20 +82,32 @@ export default function Products(props) {
     function handleHideProduct() {
         props.setShowProduct()
     }
+
+
     
+    function getImgUrl(url) {
+        if (isUrl(url)) {
+            return url
+        } else {
+            return `./img/products/${url}`
+            
+        }
+    }
+
     const prods = props.items.map(prod => {      
-        let imageSrc
+        /* let imageSrc
         try {
             imageSrc = require(`../img/products/fruits/${prod.photos[0]}`)
         } catch(err) {            
             imageSrc = require(`../img/empty_img.png`)
-        }
+        } */
+                
+        
         return ( 
             <div className="product-item" key={prod.uid}>
-                <img 
-                    src={imageSrc}
-                    className="product-item-thumb" 
-                />
+                <span className="product-item-thumb" style={{backgroundImage: `url(${getImgUrl(prod.photos[0])})`, 
+                    backgroundRepeat:"no-repeat" }}></span>
+                
                 {/* <ImageGallery items={images} showThumbnails={false} /> */}
                 <span className="product-item-title" onClick={() => handleShowProduct(prod)}>{prod.title}</span>
                 <div className="product-item-info-wrapper">
@@ -159,11 +123,11 @@ export default function Products(props) {
     return (
 
         props.showProduct? 
-            <Product prod={props.showProduct} close={handleHideProduct} addToCart={addToCart} />: 
+            <Product prod={props.showProduct} close={handleHideProduct} addToCart={addToCart} user={props.user} />: 
             props.user && props.user.level<4?
             <>
                 <div className="editor-txt">
-                    <form name="catalog_page_form" onSubmit={(event) => handleSubmit(event)}>
+                    <form name="catalog_page_form" onSubmit={(event) => props.handleSubmit(event, formData)}>
                         <span>Page title:</span>
                         <input className="input" name="title" type="text" required onChange={handleChange} value={formData.title} />
                         <span>Page content:</span>
@@ -177,9 +141,10 @@ export default function Products(props) {
                             
                         </select>
                         <div className="editor-txt-buttons">
-                            <button type="submit" className="btn">Save</button> 
-                            <button className="btn txt-red" onClick={handleDeletePage}>Delete page</button>
+                            <button type="submit" className="btn txt-green">Save</button> 
+                            <button className="btn txt-red" onClick={(event) => props.handleDeletePage(event)}>Delete page</button>
                         </div>
+                        <div className="product-item"></div>
                     </form>
                 </div>
                 <div className="products">{prods}</div>

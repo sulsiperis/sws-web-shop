@@ -1,34 +1,38 @@
-//1. Fix the grid design to stop layers from overlaping +
-//2. Change the colors +
-//3. firestore connect for shop items +
-//4. firestore design for pages and content +
+//1. Fix the grid design to stop layers from overlaping
+//2. Change the colors
+//3. firestore connect for shop items
+//4. firestore design for pages and content
 5. content editor
-//6. move content-cart to separate component +
-//7. menu toggle function +
+//6. move content-cart to separate component
+//7. menu toggle function
 8. fix the content+menu 100% height when low content
 9. update DB quantity only when purchase button pressed
 10. Fix the cart notifier design for small screens
 11. min/max font size in title and product description
-//12. User auth +
+//12. User auth
 13. Fix the bug when sometimes after pressing home button and coming back - menu doesn't show up
-//14. fix header buttons height when hovered to be nice rectangle+
+//14. fix header buttons height when hovered to be nice rectangle
 15. useRef() hook for passwords
-//16. set last_seen_date on logout +
-//17. load user data for info page and hold in state on login +
-18. Fix category item click on currentCat while showing single product
+//16. set last_seen_date on logout
+//17. load user data for info page and hold in state on login
+//18. Fix category item click on currentCat while showing single product
 19. Cart design fix when showing single product
-//20. Fix load orders bug when first logging in and showing userInfo page (orders doesn't appeas due to some bug w/ async) +
-//21. Admin can make other users admins +
+//20. Fix load orders bug when first logging in and showing userInfo page (orders doesn't appeas due to some bug w/ async)
+//21. Admin can make other users admins
 22. Fix bug when clicking view cart from category
 23. bug fix clear orders alert happens as many times as orders were deleted
 24. update stock after successful purchase
 25. need to trigger pagesRaw state update after save
+26. tooltips
 
 ---------------
-localStorage:
+https://upload.wikimedia.org/wikipedia/commons/e/ee/Apples.jpg
+https://1.bp.blogspot.com/-sm2PC8KW-l4/UDP7Z4Mz80I/AAAAAAAAB6g/j91oeuESMcs/s1600/apple.jpg
+https://eskipaper.com/images/green-apple-pictures-1.jpg
 
-cart[{"itemid": "31r2r24r24wdvsdc", "quantity": 3}, {"itemid": "sssf333", "quantity": 1}, {"itemid": "383838383838", "quantity": 66666}]
-
-pages [{"type_id": 1, "paren_id": 1, "title": "about"}, 
-        {"type_id": 2, "paren_id": 2, "title": "gallery"},
-        {"type_id": 100, "paren_id": 1, "title": "user"}]
+https://www.enjpg.com/img/2020/pineapple-6.jpg
+http://www.newhealthadvisor.org/images/1HT16325/Banannas.jpg
+http://cibo.info/wp-content/uploads/2014/10/avocado-and-leaves.jpg
+https://healthjade.com/wp-content/uploads/2017/09/sweet-potato.jpg
+https://thumbs.dreamstime.com/z/oats-background-26152839.jpg
+        

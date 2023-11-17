@@ -318,6 +318,7 @@ body {
   border: 3px solid #000;
   border-radius: 6px;
   cursor: pointer;
+  background-size:  cover;
 }
 .product-item {
   display: flex;
@@ -519,6 +520,9 @@ body {
 .txt-red {
   color: rgb(139, 9, 9);
 }
+.txt-green {
+  color: rgb(18, 99, 42);
+}
 .usersettings-block {
   border-bottom: 1px solid #000;
   margin-bottom: 12px;
@@ -585,4 +589,18 @@ body {
   border-top: 1px solid #000;
   display: flex;
   justify-content: space-between;
+}
+input.product-title {
+  width: clamp(240px, 60vw, 800px);
+}
+.editor-imguploader-wrapper {
+  background: rgb(18, 99, 42);
+  display: flex;
+}
+.editor-img-uploader {
+  border: 1px dashed rgb(54, 52, 52);
+  height: 100px;
+}
+.upload-image-box {
+  background: rgb(139, 9, 9);
 }
