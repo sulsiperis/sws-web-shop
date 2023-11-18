@@ -26,7 +26,6 @@ import {
   } from "firebase/firestore"
 import { db } from "../firebase"
 import dbQuery from "../functions/dbQuery"
-import ImageGallery from "react-image-gallery"
 import { useCookies } from "react-cookie"
 import { nanoid } from "nanoid"
 
@@ -61,35 +60,7 @@ export default function Content(props) {
         }
 
     }
-
-
-    /* const images = [
-        {
-          original: "https://picsum.photos/id/1018/1000/600/",
-          thumbnail: "https://picsum.photos/id/1018/250/150/",
-          thumbnailHeight: "122px", 
-          thumbnailWidth: "122px",
-          originalHeight: "200px",
-          originalWidth: "200px",
-        },
-        {
-          original: "https://picsum.photos/id/1015/1000/600/",
-          thumbnail: "https://picsum.photos/id/1015/250/150/",
-          thumbnailHeight: "122px", 
-          thumbnailWidth: "122px",
-          originalHeight: "200px",
-          originalWidth: "200px",
-        },
-        {
-          original: "https://picsum.photos/id/1019/1000/600/",
-          thumbnail: "https://picsum.photos/id/1019/250/150/",
-          thumbnailHeight: "122px", 
-          thumbnailWidth: "122px",
-          originalHeight: "200px",
-          originalWidth: "200px",
-        },
-    ]; */
-
+ 
     React.useEffect(() => {
         const getProds = async () => {
             const cdata2 = await dbQuery("sws-products", db, true)
@@ -242,11 +213,11 @@ export default function Content(props) {
             const getAll = async() => { 
                 try {
                     const querySnapshot = await getDocs(q)
-                    const nArr = querySnapshot.docs.map(doc => ({
+                    const nArr66 = querySnapshot.docs.map(doc => ({
                         ...doc.data(),
                         uid: doc.id
                     }))
-                    setProductsItems(nArr)
+                    setProductsItems(nArr66)
                 } catch (err) {
                     console.log("ERROR!: " + err)        
                 }
@@ -557,6 +528,10 @@ export default function Content(props) {
         }
     } 
 
+    function handleSetShowProducts(prodObj) {
+        setShowProduct(prodObj)
+    }
+
    // console.log("current page: ", currentPage, "curr page type: ", curPageType)
    // console.log("pages raw: ", pagesRaw)
 
@@ -633,7 +608,8 @@ export default function Content(props) {
                             currentPage={currentPage}
                             currentCat={currentCat}
                             showProduct={showProduct}
-                            setShowProduct={(prodObj) => setShowProduct(prodObj)}
+                            //setShowProduct={(prodObj) => setShowProduct(prodObj)}
+                            setShowProduct={handleSetShowProducts}
                             pages={pages}
                             triggerReloadPages={triggerReloadPages}
                             user={uInfo}

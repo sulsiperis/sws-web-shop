@@ -24,6 +24,7 @@
 24. update stock after successful purchase
 25. need to trigger pagesRaw state update after save
 26. tooltips
+27. Product view single image loading url bug
 
 ---------------
 https://upload.wikimedia.org/wikipedia/commons/e/ee/Apples.jpg

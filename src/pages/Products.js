@@ -40,6 +40,11 @@ export default function Products(props) {
         handleHideProduct()
     }, [props.currentPage, props.currentCat]) */
 
+    function handleSaveProduct (event, data) {
+        event.preventDefault()
+    }
+
+
     function handleChange(event) {
         setFormData(oldVal => {
             return(
@@ -76,7 +81,7 @@ export default function Products(props) {
         props.updateCart(newStorage)
         
     }
-    function handleShowProduct(prodObj) {
+    function handleShowProduct(event, prodObj) {
         props.setShowProduct(prodObj)
     }
     function handleHideProduct() {
@@ -94,7 +99,7 @@ export default function Products(props) {
         }
     }
 
-    const prods = props.items.map(prod => {      
+    const prodItems = props.items.map(prod => {      
         /* let imageSrc
         try {
             imageSrc = require(`../img/products/fruits/${prod.photos[0]}`)
@@ -109,7 +114,7 @@ export default function Products(props) {
                     backgroundRepeat:"no-repeat" }}></span>
                 
                 {/* <ImageGallery items={images} showThumbnails={false} /> */}
-                <span className="product-item-title" onClick={() => handleShowProduct(prod)}>{prod.title}</span>
+                <span className="product-item-title" onClick={(event) => handleShowProduct(event, prod)}>{prod.title}</span>
                 <div className="product-item-info-wrapper">
                     
                         <span className="product-item-price">{prod.price}€</span>
@@ -120,6 +125,9 @@ export default function Products(props) {
             </div>
         )
     })
+
+//console.log(props.showProduct)
+
     return (
 
         props.showProduct? 
@@ -147,12 +155,12 @@ export default function Products(props) {
                         <div className="product-item"></div>
                     </form>
                 </div>
-                <div className="products">{prods}</div>
+                <div className="products">{prodItems}</div>
             </>
 
             :<div className="products">
                 {nArr[0]?.content}
-                {prods}
+                {prodItems}
             </div> 
     )
 }
