@@ -1,4 +1,7 @@
 import React from "react"
+import Editor from 'react-simple-wysiwyg';
+import DOMPurify from 'dompurify';
+
 import dbQuery from "../functions/dbQuery"
 import { 
     collection,
@@ -39,7 +42,10 @@ export default function TextPage(props) {
         
         })
     }
-    
+    function getContent() {
+        const sanitizedContent = DOMPurify.sanitize(nArr[0]?.content)
+        return <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
+    }
     //saves page or creates a new one
    /*  function handleSubmit(event) {
         event.preventDefault()
@@ -144,7 +150,12 @@ export default function TextPage(props) {
                 <span>Page title:</span>
                 <input className="input" name="title" type="text" required onChange={handleChange} value={formData.title} />
                 <span>Page content:</span>
-                <textarea className="input editor-content" name="content" required onChange={handleChange} value={formData.content} />
+
+                <Editor name="content" value={formData.content} onChange={handleChange} />
+
+                {/* <textarea className="input editor-content" name="content" required onChange={handleChange} value={formData.content} /> */}
+
+
                 <span>Order:</span>
                 <input className="input" name="order" type="number" min={1} max={1000} onChange={handleChange} value={formData.order} />
                 <span>Page type:</span>
@@ -161,7 +172,7 @@ export default function TextPage(props) {
         </div>
         :
         <div>            
-            {nArr && nArr[0]?.content}
+            {nArr && getContent()}
         </div>
     )
 }

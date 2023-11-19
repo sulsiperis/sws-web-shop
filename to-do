@@ -25,6 +25,7 @@
 25. need to trigger pagesRaw state update after save
 26. tooltips
 27. Product view single image loading url bug
+28. Bind cookie extension to mouse clicks instead of menu clicks
 
 ---------------
 https://upload.wikimedia.org/wikipedia/commons/e/ee/Apples.jpg

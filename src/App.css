@@ -612,6 +612,60 @@ body {
   padding-bottom: 12px;
 }
 /***** Editor *****/
+.rsw-editor {
+   width: clamp(520px, 66vw, 800px) !important;
+  /* min-width: 366px !important; */
+  /* width: 520px !important; */
+  border: 1px solid #fff;
+  border-radius: 6px;
+  box-shadow: 
+    0px 0px 6px 1px rgba(253, 243, 185, 1)
+  ;
+  
+}
+.rsw-ce {
+  /* width: clamp(240px, 60vw, 800px); */
+  height: auto;
+  min-height: 200px;
+  background: rgba(253, 243, 185, 1);  
+}
+.rsw-ce:hover {
+  border: 1px dotted #000;
+}
+.rsw-toolbar {
+  background-color: transparent !important;
+}
+.rsw-toolbar select {
+  border: 1px solid #fff;
+  border-radius: 6px;
+  box-shadow: 
+    0px 0px 6px 1px rgba(253, 243, 185, 1)
+  ;
+  background: rgba(253, 243, 185, 1);
+  font-size: 12px;
+  font-weight: 600;
+}
+.rsw-btn {
+  
+  margin-left: 2px !important;
+  margin-right: 2px !important;
+  background: #c5b912 !important;
+
+  border: 1px solid #fff !important;
+  border-radius: 6px !important;
+  box-shadow: 
+    0px 0px 6px 1px rgba(253, 243, 185, 1) !important
+  ;
+  min-width: 2em !important;
+}
+.rsw-btn:hover {
+  border: 1px dotted #000 !important;
+}
+.rsw-btn[data-active="true"] {
+  /* background: #e0e0e0 !important; */
+  border: 2px solid #000 !important;
+}
+
 .editor-txt {
   margin-top: 12px;
 }
