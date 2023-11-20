@@ -19,13 +19,16 @@
 19. Cart design fix when showing single product
 //20. Fix load orders bug when first logging in and showing userInfo page (orders doesn't appeas due to some bug w/ async)
 //21. Admin can make other users admins
-22. Fix bug when clicking view cart from category
-23. bug fix clear orders alert happens as many times as orders were deleted
-24. update stock after successful purchase
-25. need to trigger pagesRaw state update after save
+//22. Fix bug when clicking view cart from category
+//23. bug fix clear orders alert happens as many times as orders were deleted
+//25. need to trigger pagesRaw state update after save
 26. tooltips
 27. Product view single image loading url bug
 28. Bind cookie extension to mouse clicks instead of menu clicks
+//29. Save/new category
+//30. Editor for product description and category page
+31. Make clicking on product's image loop through photos arr
+//32. Cart photos doesn't show
 
 ---------------
 https://upload.wikimedia.org/wikipedia/commons/e/ee/Apples.jpg

@@ -1,6 +1,6 @@
 import React from "react"
 import Editor from 'react-simple-wysiwyg';
-import DOMPurify from 'dompurify';
+import { getJsxFromStr } from "../functions/files";
 
 import dbQuery from "../functions/dbQuery"
 import { 
@@ -21,8 +21,8 @@ export default function TextPage(props) {
     const [formData, setFormData] = React.useState({
         "title": "",
         "content": "",
-        "order": null,
-        "type_id": null
+        "order": 0,
+        "type_id": 0
     })
 
     React.useEffect(() => {
@@ -42,107 +42,7 @@ export default function TextPage(props) {
         
         })
     }
-    function getContent() {
-        const sanitizedContent = DOMPurify.sanitize(nArr[0]?.content)
-        return <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
-    }
-    //saves page or creates a new one
-   /*  function handleSubmit(event) {
-        event.preventDefault()
-        const pageExist = async() => {
-            const pagesArr =  await dbQuery("sws-pages", db, false, ["__name__", "==", props.id])
-           // console.log(pagesArr)
-            //check if it's a new page or editing old one
-            if (pagesArr.length > 0) {
-                if ((formData.title !=="") && (formData.content!=="")) {
-                    const updateDb = async() => {
-                        const pageRef = doc(db, "sws-pages", props.id)
-                        await updateDoc(pageRef, { 
-                            title: formData.title, 
-                            content: formData.content, 
-                            order: parseInt(formData.order, 10)
-                        })
-                    }
-
-                    //need to trigger pagesRaw state update after save
-
-                    updateDb().then((err) => err?alert("Content NOT changed. Error: " + err):alert("Content successfully changed!"))
-                    .then(props.triggerReloadPages())
-                }
-                //new page
-            } else {
-                
-                
-                const newPageArr = {
-                    type_id: parseInt(formData.type_id, 10),
-                    options: {},
-                    order: parseInt(formData.order, 10),
-                    parent_id: props.pages[props.pages.length-1].parent_id,
-                    title: formData.title,
-                    content: formData.content
-                }
-
-
-                //console.log("new Page", newPageArr)
-                let newId = ""
-                const addPg = async() => await addDoc(collection(db, "sws-pages"), newPageArr)
-                addPg().then((res) => {
-                    if (!res.id) {
-                        alert("DB error. Page NOT created!")
-                    } else {
-                        props.triggerReloadPages()
-                        newId = res.id  
-                       // console.log(newId, "nid1")
-                        props.pageChange(newId)
-                        alert("New page created successfully.")                              
-                    }
-                })               
-                
-            }
-
-        }
-        pageExist()
-
-
-    } */
-
-    //deletes page and subpages. Need to implement deletion of the products
-   /*  function handleDeletePage(event) {
-        event.preventDefault()
-        if (window.confirm("Are you sure to delete this page and all sub-pages?")) {
-            const pageRef = doc(db, "sws-pages", props.id)            
-            const q = query(collection(db, "sws-pages"), where("parent_id", "==", props.id))
-            try {
-                const getChilds = async() => {
-                    const childs = await getDocs(q)
-                    if (childs.docs.length>0) {                        
-                        childs.forEach((d) => {
-                            const childsRef = doc(db, "sws-pages", d.id)
-                            const dd = async() => {
-                                await deleteDoc(childsRef)
-                            }
-                            dd()                            
-                        })
-                    }
-                }
-                getChilds()
-                const delPage = async() => {
-                    await deleteDoc(pageRef)
-                }
-                delPage().then((err) => err?
-                    alert("Could not delete page. Error: " + err):alert("Page successfully deleted!"))
-                    .then(props.triggerReloadPages())
-                    .then(props.pageChange(props.getPagesOfType(21)[0].uid))
-                    
-
-            } catch (err) {                
-                    console.log("ERROR!: " + err)
-                    return false
-            }
-
-        }
-    } */
-
+       
     return (
         props.user && props.user.level <4 ?
         <div className="editor-txt">
@@ -172,7 +72,7 @@ export default function TextPage(props) {
         </div>
         :
         <div>            
-            {nArr && getContent()}
+            {nArr && getJsxFromStr(nArr[0]?.content)}
         </div>
     )
 }

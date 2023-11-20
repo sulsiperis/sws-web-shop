@@ -1,15 +1,17 @@
 import React from "react"
-import { isUrl, imageExists } from "../functions/files"
 import { nanoid } from "nanoid"
+import { isUrl, imageExists, getJsxFromStr } from "../functions/files"
+import { DefaultEditor } from "react-simple-wysiwyg"
 
 export default function Product(props) {
     const [quantity, setQuantity] = React.useState(1)    
      
     const [formData, setFormData] = React.useState({
+        uid: props.prod?.uid,
         title: props.prod?.title,
         description: props.prod?.description,
         photos: ["", "", "", "", "", ""],
-        price: Number(props.prod?.price.toFixed(2)),
+        price: Number(props.prod?.price).toFixed(2),
         stock: props.prod?.stock
         //category_id: null
         //date_added: null
@@ -22,10 +24,10 @@ export default function Product(props) {
     const [currentImg, setCurrentImg] = React.useState(1)
 
     const pager = 
-        props.prod.photos.map((photo, index) => {
+        props.prod.photos?.map((photo, index) => {
             
             return (
-                <span key={nanoid()} className={currentImg===index+1?"product-image-page selected":"product-image-page"} onClick={() => handleChangePhoto(index+1)}></span>                        
+                photo !== "" && <span key={nanoid()} className={currentImg===index+1?"product-image-page selected":"product-image-page"} onClick={() => handleChangePhoto(index+1)}></span>                        
             )
         })
     
@@ -172,14 +174,18 @@ export default function Product(props) {
                         <span>Title:</span>
                         <input className="input editor-product-title" name="title" type="text" required onChange={handleChange} value={formData.title} />
                         <span>Description:</span>
-                        <textarea className="input editor-content" name="description" onChange={handleChange} value={formData.description} />
+                        
+                            <DefaultEditor name="description" value={formData.description} onChange={handleChange} />
+                        
+                        {/* <textarea className="input editor-content" name="description" onChange={handleChange} value={formData.description} /> */}
+
                         <span>Price:</span>
                         <input className="input" name="price" type="number" onChange={handleChange} value={formData.price} />
                         <span>Stock:</span>
                         <input className="input" name="stock" type="number" onChange={handleChange} value={formData.stock} />
                         <div className="editor-txt-buttons">
                             <button type="submit" className="btn txt-green">Save</button> 
-                            <button className="btn txt-red" onClick={(event) => props.handleDeleteProduct(event)}>Delete product</button>
+                            <button className="btn txt-red" onClick={(event) => props.handleDeleteProduct(event, props.prod.uid)}>Delete product</button>
                         </div>
                     </form>
                     {/* common view of product */}
@@ -187,7 +193,7 @@ export default function Product(props) {
                 <>
                     
                     <p className="product-title">{props.prod.title}</p>
-                    <p>Price: <span>{Number(props.prod.price.toFixed(2))} €</span></p>
+                    <p>Price: <span>{Number(props.prod.price).toFixed(2)} €</span></p>
                     <p>Stock: <span>{props.prod.stock>0?props.prod.stock:"Out of stock!"}</span></p>
 
                     {props.prod.stock>0 && <p>
@@ -208,7 +214,7 @@ export default function Product(props) {
                         </span>
                         
                     </p>}
-                    <p>{props.prod.description}</p>
+                    {getJsxFromStr(props.prod.description)}
                 </>
             }
         </div>

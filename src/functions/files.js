@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify'
+
 export function isUrl(string) {
     if(/(http(s?)):\/\//i.test(string)) {
         return true
@@ -11,4 +13,16 @@ export function imageExists(url) {
       img.addEventListener('error', () => resolve(false))
       
     })
+}
+export function getImgUrl(url) {
+    if (isUrl(url)) {
+        return url
+    } else {
+        return `./img/products/${url}`
+        
+    }
+}
+export function getJsxFromStr(str) {
+    const sanitizedContent = DOMPurify.sanitize(str)
+    return <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
 }

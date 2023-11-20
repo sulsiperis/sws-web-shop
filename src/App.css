@@ -313,8 +313,9 @@ body {
   /* padding: 0px 12px 0px 12px; */
 }
 .product-item-thumb {
-  width: 80px;
-  height: 80px;
+  display: block;
+  width: 80px !important;
+  height: 80px !important;
   border: 3px solid #000;
   border-radius: 6px;
   cursor: pointer;
@@ -326,7 +327,8 @@ body {
   align-items: center;
   /* border-bottom: 2px solid #f5f0b3; */
   border-bottom: 1px solid #000;
-  padding-block: 12px;
+  padding-block: 8px;
+  margin-bottom: 4px;
   
 }
 .product-item-title {

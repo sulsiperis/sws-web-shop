@@ -1,7 +1,7 @@
 import React from "react";
 import Product from "../pages/Product";
 import dbQuery from "../functions/dbQuery"
-import { isUrl } from "../functions/files"
+import { getImgUrl } from "../functions/files"
 import { 
     collection,
     addDoc, //adds collection to db
@@ -14,6 +14,8 @@ import {
     getDocs, //returns docs with given query
   } from "firebase/firestore"
 import { db } from "../firebase"
+import { getJsxFromStr } from "../functions/files"
+import { DefaultEditor } from "react-simple-wysiwyg"
 
 
 export default function Products(props) {
@@ -40,9 +42,7 @@ export default function Products(props) {
         handleHideProduct()
     }, [props.currentPage, props.currentCat]) */
 
-    function handleSaveProduct (event, data) {
-        event.preventDefault()
-    }
+
 
 
     function handleChange(event) {
@@ -88,16 +88,15 @@ export default function Products(props) {
         props.setShowProduct()
     }
 
-
     
-    function getImgUrl(url) {
+    /* function getImgUrl(url) {
         if (isUrl(url)) {
             return url
         } else {
             return `./img/products/${url}`
             
         }
-    }
+    } */
 
     const prodItems = props.items.map(prod => {      
         /* let imageSrc
@@ -125,13 +124,44 @@ export default function Products(props) {
             </div>
         )
     })
+    function handleDeleteProduct (event, prodId) {
+        event.preventDefault()
+        if (window.confirm("Are you sure you want to remove this product from DB?")) {
+            const prodRef = doc(db, "sws-products", prodId)
+           
+            try {               
+                const delProd = async() => {
+                    await deleteDoc(prodRef)
+                }
+                delProd().then((err) => err?
+                    alert("Unable delete product. Error: " + err):alert("Product successfully removed!"))
+                    .then(props.triggerReloadProds)
+                    .then(handleHideProduct)
+                    
 
+            } catch (err) {                
+                    console.log("ERROR!: " + err)
+                    return false
+            }
+
+        }
+    }
+    function handleSaveProduct(event, prodFormData) {
+        props.handleSaveProduct(event, prodFormData)
+    }
 //console.log(props.showProduct)
 
     return (
 
         props.showProduct? 
-            <Product prod={props.showProduct} close={handleHideProduct} addToCart={addToCart} user={props.user} />: 
+            <Product 
+                prod={props.showProduct} 
+                close={handleHideProduct} 
+                addToCart={addToCart} 
+                user={props.user} 
+                handleSaveProduct={handleSaveProduct}
+                handleDeleteProduct={handleDeleteProduct}
+            />: 
             props.user && props.user.level<4?
             <>
                 <div className="editor-txt">
@@ -139,7 +169,11 @@ export default function Products(props) {
                         <span>Page title:</span>
                         <input className="input" name="title" type="text" required onChange={handleChange} value={formData.title} />
                         <span>Page content:</span>
-                        <textarea className="input editor-content" name="content" required onChange={handleChange} value={formData.content} />
+
+                        <DefaultEditor name="content" value={formData.content} onChange={handleChange} />
+                        {/* <textarea className="input editor-content" name="content" required onChange={handleChange} value={formData.content} /> */}
+
+
                         <span>Order:</span>
                         <input className="input" name="order" type="number" min={1} max={1000} onChange={handleChange} value={formData.order} />
                         <span>Page type:</span>
@@ -153,14 +187,17 @@ export default function Products(props) {
                             <button className="btn txt-red" onClick={(event) => props.handleDeletePage(event)}>Delete page</button>
                         </div>
                         <div className="product-item"></div>
-                    </form>
+                    </form>                    
                 </div>
-                <div className="products">{prodItems}</div>
+                <div className="products">
+                    {prodItems}
+                    {props.user?.level===1 && <span className="add txt-green" onClick={() => props.handleNewProduct()} >+</span> }
+                </div>
             </>
 
-            :<div className="products">
-                {nArr[0]?.content}
-                {prodItems}
+            :<div className="products">                
+                {getJsxFromStr(nArr[0]?.content)}
+                {prodItems}                
             </div> 
     )
 }

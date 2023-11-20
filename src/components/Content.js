@@ -48,6 +48,7 @@ export default function Content(props) {
     const [uInfo, setUInfo] = React.useState()
     const [users, setUsers] = React.useState()
     const [reloadPages, setReloadPages] =React.useState(false)
+    const [reloadProds, setReloadProds] =React.useState(false)
 
     const [cookies, setCookie, removeCookie] = useCookies(["user"]);
      
@@ -64,7 +65,6 @@ export default function Content(props) {
     React.useEffect(() => {
         const getProds = async () => {
             const cdata2 = await dbQuery("sws-products", db, true)
-            //console.log(cdata2)
             const nArr2 = cdata2.map(prod => ({
                 ...prod.data(),
                 uid: prod.id
@@ -82,18 +82,26 @@ export default function Content(props) {
         cookies.user && setLogin(true)
         const fetchData = async () => {
             const cdata = await dbQuery("sws-pages", db, true)
-            const nArr = cdata && cdata.map(pg => ({
-                ...pg.data(),
-                uid: pg.id
-            }))
-            setPagesRaw(nArr)
+            //cdata.then((err) => {
+                if(!cdata) {
+                    alert('Error while connecting to db!')
+                } else {
+                    const nArr = cdata.map(pg => ({
+                        ...pg.data(),
+                        uid: pg.id
+                    }))
 
-           // console.log("reload triggered", nArr)
+                    //console.log("reload triggered", nArr)
+
+                    setPagesRaw(nArr)
+                    reloadPages && setReloadPages(false)
+                }            
+            
+            //})
+            
 
         }
-        fetchData().then((err) => err?
-            alert('error connecting to db'):
-            reloadPages && setReloadPages(false))
+        fetchData()
         
     }, [reloadPages])
 
@@ -139,10 +147,6 @@ export default function Content(props) {
     React.useEffect(() => {        
         if (login) {    
             setPages(pagesRaw)
-
-            ////////////////////////////////////
-            //console.log("pages reloades")
-
             const getUserInfo = async() => {
                 const userData = await dbQuery("sws-users", db, false, ["__name__", "==", cookies.user.split("%")[1]])
                 if (userData[0]) {
@@ -224,7 +228,8 @@ export default function Content(props) {
             }
             getAll()
         }
-    }, [currentCat])
+        reloadProds && setReloadProds(false)
+    }, [currentCat, reloadProds])
 
 
     //cart hook
@@ -261,9 +266,6 @@ export default function Content(props) {
         let count = 0, total = 0
         if (cartContent) {
             for(let i=0;i<cartContent.length;i++) {
-                
-              //  console.log(findDbPrice(cartContent[i].itemId))
-
                 count=count + cartContent[i].quantity
                 total = total + (await findDbPrice(cartContent[i].itemId) * cartContent[i].quantity)
             }
@@ -273,8 +275,6 @@ export default function Content(props) {
     }
 
     //when single product item clicked
-    //console.log(Number((3.14157862478).toFixed(2))+100)
-    
     function pageChange(id) {
         setShowProduct() //hides product when menu item clicked
         setCurrentPage(id)
@@ -287,20 +287,11 @@ export default function Content(props) {
     }
 
     function getPageType(id) {
-        if (id) {
-           // console.log("current page: ", currentPage, "curr page type: ", curPageType)
+        if (id) {           
             const qData = pagesRaw.filter(page => (page.uid === id))
             if (qData.length>0) { 
                 return qData[0].type_id 
-            }
-            else {
-              //  console.log("page type not found")
-              /*   setTimeout(() => {
-                    getPageType(id)
-                }, 400) */
-                
-                
-            }
+            }            
         } else {
             return false
         }
@@ -424,13 +415,13 @@ export default function Content(props) {
     }
   
     function triggerReloadPages() {
-    //console.log("reload pages triggered")
+   // console.log("reload pages triggered")
         setReloadPages(true)
     }
 
     function findMaxCatId() {
-        const cats = pages.filter(page => page.options.type==="category")
-        const max = cats.reduce((prev, current) => (prev && prev.options.category_id > current.options.category_id) ? prev : current, null)
+        const cats = pages.filter(page => page.options?.type==="category")
+        const max = cats.reduce((prev, current) => (prev && prev.options.category_id > current.options.category_id) ? prev : current, 0)
         return max.options.category_id
     }
     
@@ -453,16 +444,23 @@ export default function Content(props) {
                     }
                     //need to trigger pagesRaw state update after save
 
-                    updateDb().then((err) => err?alert("Content NOT changed. Error: " + err):alert("Content successfully changed!"))
-                    .then(triggerReloadPages())
+                    updateDb().then((err) => {
+                        err?alert("Content NOT changed. Error: " + err):alert("Content successfully changed!")
+                        triggerReloadPages()
+                    })
+                    
+                } else {
+                    alert("Page Title and Page Content are mandatory!")
                 }
                 //new page
             } else {
                 
-                
+                //if page type is a category:
+                const opts = parseInt(formData.type_id, 10)===200?{ type: "category", category_id: findMaxCatId()+1 }:{} 
+
                 const newPageArr = {
                     type_id: parseInt(formData.type_id, 10),
-                    options: {},
+                    options: opts,
                     order: parseInt(formData.order, 10),
                     parent_id: pages[pages.length-1].parent_id,
                     title: formData.title,
@@ -477,11 +475,12 @@ export default function Content(props) {
                     if (!res.id) {
                         alert("DB error. Page NOT created!")
                     } else {
+                        alert("New page created successfully.")
                         triggerReloadPages()
                         newId = res.id  
                        // console.log(newId, "nid1")
                         pageChange(newId)
-                        alert("New page created successfully.")                              
+                                                    
                     }
                 })               
                 
@@ -489,17 +488,101 @@ export default function Content(props) {
 
         }
         pageExist()
-    } 
+    }
+    function handleSaveProduct(event, prodFormData) {
+        event.preventDefault()
+        
+
+        const prodExist = async() => {
+            const pagesArr =  await dbQuery("sws-products", db, false, ["__name__", "==", prodFormData.uid])
+           // console.log(pagesArr)
+            //check if product exists in db and update if so
+            if (pagesArr.length > 0) {
+                if ((prodFormData.title !=="") && (prodFormData.price!==null) && (prodFormData.stock!==null)) {
+                    const updateDb = async() => {
+                        const pageRef = doc(db, "sws-products", prodFormData.uid)
+                        await updateDoc(pageRef, { 
+                            title: prodFormData.title, 
+                            description: prodFormData.description, 
+                            price: Number(prodFormData.price).toFixed(2),
+                            stock: parseInt(prodFormData.stock, 10),
+                            photos: prodFormData.photos
+                        })
+                    }
+                    //need to trigger pagesRaw state update after save
+
+                    updateDb().then((err) => err?alert("Content NOT changed. Error: " + err):alert("Content successfully changed!"))
+                   // .then(triggerReloadPages())
+                }
+                //new product
+            } else {                
+                
+                const newProdArr = {
+                    title: prodFormData.title,
+                    description: prodFormData.description,
+                    price: Number(prodFormData.price).toFixed(2),
+                    stock: parseInt(prodFormData.stock, 10),
+                    photos: prodFormData.photos,
+                    date_added: new Date(),
+                    category_id: parseInt(currentCat, 10)
+                }
+
+                //console.log("new Page", newPageArr)
+                let newId = ""
+                const addPg = async() => await addDoc(collection(db, "sws-products"), newProdArr)
+                addPg().then((res) => {
+                    if (!res.id) {
+                        alert("DB error. Product not added!")
+                    } else {                        
+                        newId = res.id
+                        setReloadProds(true)
+                        //setCurrentCat(currentCat)
+                        setShowProduct(productsItems.filter((pr => pr.uid===newId) ))
+                       // console.log(newId, "nid1")
+                        //pageChange(newId)
+                        alert("New product added successfully.")
+                        setShowProduct()
+                    }
+                })               
+                
+            }
+
+        }
+        prodExist()
+
+    }
     
+    function handleNewProduct() {
+        const tempId = "new_"+nanoid()
+        let nArr = productsItems
+        const newObj = {
+            uid: tempId,    
+            title: "!new_product",
+            description: "",
+            price: Number(0).toFixed(2),
+            stock: parseInt(0, 10),
+            photos: [],
+            date_added: new Date(),
+            category_id: parseInt(currentCat, 10)
+        }      
+        nArr.push(newObj)
+        setCurrentCat(currentCat)
+        setShowProduct(newObj)
+ 
+    }
+    //console.log(curPageType)
+   // console.log(productsItems)
+
     //deletes page and subpages. Need to implement deletion of the products
     function deletePage(event) {
         event.preventDefault()
-        if (window.confirm("Are you sure about deleting this page and all it's sub-pages?")) {
+
+        if (window.confirm(curPageType===200?"Are you want to delete this category and all it's products?":"Are you sure about deleting this page and all it's sub-pages?")) {
             const pageRef = doc(db, "sws-pages", currentPage)            
-            const q = query(collection(db, "sws-pages"), where("parent_id", "==", currentPage))
+            
             try {
                 const getChilds = async() => {
-                    const childs = await getDocs(q)
+                    const childs = await getDocs(query(collection(db, "sws-pages"), where("parent_id", "==", currentPage)))
                     if (childs.docs.length>0) {                        
                         childs.forEach((d) => {
                             const childsRef = doc(db, "sws-pages", d.id)
@@ -511,13 +594,35 @@ export default function Content(props) {
                     }
                 }
                 getChilds()
+
+                const getProds = async() => {
+                    const childs = await getDocs(query(collection(db, "sws-products"), where("category_id", "==", currentCat)))
+                    if (childs.docs.length>0) {                        
+                        childs.forEach((d) => {
+                            const prodRef = doc(db, "sws-products", d.id)
+                            const dd = async() => {
+                                await deleteDoc(prodRef)
+                            }
+                            dd()                            
+                        })
+                    }
+                }
+                curPageType===200 && getProds()
+
+
                 const delPage = async() => {
                     await deleteDoc(pageRef)
                 }
-                delPage().then((err) => err?
-                    alert("Could not delete page. Error: " + err):alert("Page successfully deleted!"))
-                    .then(triggerReloadPages())
-                    .then(pageChange(getPagesOfType(21)[0].uid))
+                delPage().then((err) => {
+                    if (err) {
+                        alert("Could not delete page. Error: " + err)
+                    } else {
+                        alert("Page successfully deleted!")
+                        triggerReloadPages()
+                        pageChange(getPagesOfType(21)[0].uid)
+                    }
+                    
+                })
                     
 
             } catch (err) {                
@@ -565,7 +670,7 @@ export default function Content(props) {
                                         cartDetails={cartTotals} 
                                         cartPage={cartPage} 
                                     />}
-                        <div className="content-title"><span>{ContentTitle()}</span></div>
+                        <div className="content-title"><span onDoubleClick={triggerReloadPages}>{ContentTitle()}</span></div>
                         
                         {curPageType===999999 && <LoginSignup 
                                                     handleLogin={handleLogin} 
@@ -612,7 +717,12 @@ export default function Content(props) {
                             setShowProduct={handleSetShowProducts}
                             pages={pages}
                             triggerReloadPages={triggerReloadPages}
+                            triggerReloadProds={() => setReloadProds(true)}
                             user={uInfo}
+                            handleSaveProduct={handleSaveProduct}
+                            handleNewProduct={handleNewProduct}
+                            handleSubmit={savePage}
+                            handleDeletePage={deletePage}
 
                         />}
                     </div>

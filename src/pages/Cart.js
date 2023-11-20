@@ -1,5 +1,6 @@
 import React from "react"
 import dbQuery from "../functions/dbQuery"
+import { getImgUrl } from "../functions/files"
 import { 
     collection,
     onSnapshot, 
@@ -53,7 +54,8 @@ export default function Cart(props) {
     }
 
     function handlePurchase() {
-        storage.forEach(element => {
+
+        const proceedOrders = async() => await storage.forEach(element => {
             const docRef = async() => await addDoc(collection(db, "sws-orders"), {
                 user_id: props.user.id,
                 quantity: element.quantity,
@@ -62,12 +64,17 @@ export default function Cart(props) {
                 date: new Date()
                 
             })
-            docRef().then((res) => !res.id?
-                alert("Error adding order data to db!" + JSON.stringify(res)):
-                alert("Order created successfully."))
+            docRef()
         })
-        setPostPurchase(true)
-        emptyCart()
+        proceedOrders().then((res) => {
+            if (!res)  {
+                alert("Order created successfully.")        
+                setPostPurchase(true)
+                emptyCart()
+            } else {
+                alert("Error adding order data to db!")
+            }
+        })
     }
 
     function emptyCart() {
@@ -97,19 +104,27 @@ export default function Cart(props) {
                             storage.map(item => {
                                 let imageSrc, priceTotal
                                 const prodItem = products.filter(prod => (prod.id === item.itemId))
-                                try {
+                                //console.log(prodItem)
+                                /* try {
                                     imageSrc = require(`../img/products/fruits/${prodItem[0]?.photos[0]}`)
                                 } catch(err) {            
                                     imageSrc = require(`../img/empty_img.png`)
-                                }
+                                } */
                                 priceTotal = parseFloat((prodItem[0]?.price * item.quantity).toFixed(2))
                                 grandTotal=grandTotal+priceTotal
                                 return ( 
                                     <tr key={item.itemId}>
-                                        <td><img 
+                                        <td>
+                                            <span 
+                                                className="product-item-thumb" 
+                                                style={{backgroundImage: `url(${getImgUrl(prodItem[0]?.photos[0])})`, backgroundRepeat:"no-repeat" }}
+                                            ></span>
+                                            
+                                           {/*  
+                                            <img 
                                                 src={imageSrc}
                                                 className="product-item-thumb" 
-                                            />
+                                            /> */}
                                         </td>
                                         <td>{prodItem[0]?.title}</td>
                                         <td>{item.quantity}</td>                                    
