@@ -98,8 +98,10 @@ export default function Cart(props) {
     }
 
     function emptyCart() {
-        localStorage.clear()
-        props.updateCart(null)
+        if (window.confirm("Are you sure you want to remove all items from the cart?")) {
+            localStorage.clear()
+            props.updateCart(null)
+        }
     }
 
     function getCartItems() {
@@ -138,7 +140,7 @@ export default function Cart(props) {
                                         </td>
                                         <td>{prodItem[0]?.title}</td>
                                         <td>{item.quantity}</td>                                    
-                                        <td>{prodItem[0]?.price}</td>
+                                        <td>{prodItem[0]?.price.toFixed(2)}</td>
                                       
                                         <td><button className="btn txt-red" onClick={() => removeFromCart(item.itemId)}>X</button></td>                                        
                                     </tr>
@@ -151,7 +153,7 @@ export default function Cart(props) {
                             <td></td>
                             <td></td>
                                                                 
-                            <td>To pay:</td>
+                            <td>Total:</td>
                             <td>{grandTotal && grandTotal.toFixed(2)}</td>
                             <td>{props.login && storage?.length>0 && <button className="btn" onClick={handlePurchase}>Purchase</button>}</td>                               
                         </tr>
@@ -174,7 +176,7 @@ export default function Cart(props) {
             </div>
             {getCartItems()}
             <div className="cart-footer">
-                {props.login && storage?.length>0 &&<button className="btn" onClick={emptyCart}>Empty cart</button>}
+                {props.login && storage?.length>0 &&<button className="btn txt-red" onClick={emptyCart}>Empty cart</button>}
                 
             </div>
 

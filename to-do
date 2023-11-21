@@ -7,7 +7,7 @@
 //7. menu toggle function
 8. fix the content+menu 100% height when low content
 //9. update DB quantity only when purchase button pressed
-10. Fix the cart notifier design for small screens
+//10. Fix the cart notifier design for small screens
 11. min/max font size in title and product description
 //12. User auth
 13. Fix the bug when sometimes after pressing home button and coming back - menu doesn't show up
@@ -16,7 +16,7 @@
 //16. set last_seen_date on logout
 //17. load user data for info page and hold in state on login
 //18. Fix category item click on currentCat while showing single product
-19. Cart design fix when showing single product
+//19. Cart design fix when showing single product
 //20. Fix load orders bug when first logging in and showing userInfo page (orders doesn't appeas due to some bug w/ async)
 //21. Admin can make other users admins
 //22. Fix bug when clicking view cart from category
@@ -31,7 +31,8 @@
 32. Cart photos and data sometimes doesn't show
 //33. Reload products from DB after saving
 33. add to cart check stock and forbid overadding
-
+34. contact form
+35. select first child option
 ---------------
 https://upload.wikimedia.org/wikipedia/commons/e/ee/Apples.jpg
 https://1.bp.blogspot.com/-sm2PC8KW-l4/UDP7Z4Mz80I/AAAAAAAAB6g/j91oeuESMcs/s1600/apple.jpg

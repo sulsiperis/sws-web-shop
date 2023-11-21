@@ -73,36 +73,46 @@ export default function Content(props) {
             setAllProducts(nArr2)
         }
         getProds()
-    
     }, [])
+
+    //hook for redirrectin to first gallery page
+    React.useEffect(() => {
+        !currentPage && goToPage(false, 1)
+    }, [pagesRaw])
 
     //pages hook:
     React.useEffect(() => {
        
         cookies.user && setLogin(true)
-        const fetchData = async () => {
-            const cdata = await dbQuery("sws-pages", db, true)
-            //cdata.then((err) => {
-                if(!cdata) {
-                    alert('Error while connecting to db!')
-                } else {
-                    const nArr = cdata.map(pg => ({
-                        ...pg.data(),
-                        uid: pg.id
-                    }))
 
-                    //console.log("reload triggered", nArr)
+        if(props.initialPagesRaw.length > 0) {
+            setPagesRaw(props.initialPagesRaw)
+            props.setInitialPagesRaw()
+            //console.log("initial pages")
+        } else {
+            const fetchData = async () => {
+                const cdata = await dbQuery("sws-pages", db, true)
+                //cdata.then((err) => {
+                    if(!cdata) {
+                        alert('Error while connecting to db!')
+                    } else {
+                        const nArr = cdata.map(pg => ({
+                            ...pg.data(),
+                            uid: pg.id
+                        }))
 
-                    setPagesRaw(nArr)
-                    reloadPages && setReloadPages(false)
-                }            
-            
-            //})
-            
+                        //console.log("reload triggered", nArr)
 
+                        setPagesRaw(nArr)
+                        reloadPages && setReloadPages(false)
+                    }            
+                
+                //})
+                
+
+            }
+            fetchData()
         }
-        fetchData()
-        
     }, [reloadPages])
 
     //cookie auto expiration hook
@@ -198,12 +208,12 @@ export default function Content(props) {
         if (curPageType === 200) {
             const curentPageArr = pages.filter(page => (page.uid === currentPage))
 
-            curentPageArr[0].options.type === "category" && setCurrentCat(curentPageArr[0]?.options.category_id)
+            curentPageArr[0].options && curentPageArr[0]?.options.type === "category" && setCurrentCat(curentPageArr[0]?.options.category_id)
         } else {
             setCurrentCat(false)
             setProductsItems([])
             //home menu item
-            curPageType === 1 && props.changeIntro()
+            //curPageType === 1 && props.changeIntro()
             //logout menu item
             curPageType === 24 && handleLogout()
         }
@@ -344,6 +354,7 @@ export default function Content(props) {
             !delUser && uInfo.id && setLastSeen(uInfo.id)
             setUInfo()
             setLogin(false)
+            goToPage(false, 1)
         }
     }
 
@@ -374,7 +385,11 @@ export default function Content(props) {
     //to first child and if there is no childs - to home page.
     
     function goToPage(pageId="", typeId=null, optionType="") {
-
+          pageId && pagesRaw.filter((pg) => pg.uid === pageId).length>0 && pageChange(pageId)
+        if (typeId && pagesRaw.filter((pg) => pg.type_id === typeId).length>0) { 
+            pageChange(pagesRaw.filter((pg) => pg.type_id === typeId)[0].uid)
+        } 
+        optionType && pagesRaw.filter((pg) => pg.options.type === optionType).length>0 && pageChange(pagesRaw.filter((pg) => pg.options.type === optionType)[0].uid)
     }
 
     function updateName(newName) {
@@ -491,8 +506,6 @@ export default function Content(props) {
     }
     function handleSaveProduct(event, prodFormData) {
         event.preventDefault()
-        
-
         const prodExist = async() => {
             const pagesArr =  await dbQuery("sws-products", db, false, ["__name__", "==", prodFormData.uid])
            // console.log(pagesArr)
@@ -649,7 +662,7 @@ export default function Content(props) {
         setShowProduct(prodObj)
     }
 
-   // console.log("current page: ", currentPage, "curr page type: ", curPageType)
+    //console.log("current page: ", currentPage, "curr page type: ", curPageType)
    // console.log("pages raw: ", pagesRaw)
 
     return (
@@ -672,24 +685,26 @@ export default function Content(props) {
                         login={loginCheck}
                         contacts={contactsPage}
                         loggedInName={uInfo?.name}
-                    />            
-                    <div className="content">
-                        {/* test */}
-                    {/* <button onClick={findMaxCatId}>cat</button> */}
-
-                        {showCart && <ContentCart 
+                    />  
+                    
+                             
+                    <div className={showCart?"content padding-top-80":"content"} >
+                    {showCart && <ContentCart 
                                         updateCart={updateCartContent} 
                                         cartDetails={cartTotals} 
                                         cartPage={cartPage} 
-                                    />}
-                        <div className="content-title"><span onDoubleClick={triggerReloadPages}>{ContentTitle()}</span></div>
+                                    />}   
+                        <div className="content-title"><span onDoubleClick={triggerReloadPages}>{ContentTitle()}</span></div> 
+                        {/* test */}
+                        {/* <button onClick={findMaxCatId}>cat</button> */} 
+                        
                         
                         {curPageType===999999 && <LoginSignup 
                                                     handleLogin={handleLogin} 
                                                     handleCookie={handleCookie} 
                                                     users={users} 
                                                 />}
-                        {curPageType===100 && <TextPage 
+                        {((curPageType===100) || (curPageType===1) )&& <TextPage 
                                                     pages={pages} 
                                                     id={currentPage} 
                                                     user={uInfo} 
@@ -698,6 +713,7 @@ export default function Content(props) {
                                                     getPagesOfType={getPagesOfType}
                                                     handleSubmit={savePage}
                                                     handleDeletePage={deletePage}
+                                                    curPageType={curPageType}
                                                 />}
                         {curPageType===21 && login && uInfo && <UserInfo 
                                                                     user={uInfo} 

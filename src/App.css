@@ -71,7 +71,8 @@ div.intro-title p:hover {
   border-top: 2px solid #fff;
   height: 24px;
   background: rgb(207, 206, 112);
-
+  min-width: 300px;
+  white-space: nowrap;
 }
 /********** header *********/
 .header {
@@ -79,6 +80,7 @@ div.intro-title p:hover {
   grid-template-columns: 30px 108px 1fr 66px;
   align-items: center;
   background: rgb(207, 206, 112);
+  border-bottom: 2px solid #fff;
  
 }
 .header-buttons-wrapper-row {
@@ -204,11 +206,13 @@ div.intro-title p:hover {
 
 /********** content *********/
 .content {   
-  
-  border-top: 2px solid #fff;
+    
   padding-bottom: 12px;
   padding: 0px 12px 12px 12px;
-  
+  display: block;
+}
+.padding-top-80 {
+  /* padding-top: 80px; */
 }
 
 .content-title {
@@ -216,7 +220,7 @@ div.intro-title p:hover {
   font-weight: 300;
   letter-spacing: 2px;
   padding-bottom: 6px;
-  display: flex;  
+  /* display: flex;  */ 
   padding: 12px 12px 8px 22px;
   
 }
@@ -229,11 +233,11 @@ div.intro-title p:hover {
 
 /********** cart notification *********/
 .content-cart {
-  margin-top: 1px;
   display: block;
-  /* position:absolute; */  
+  position: relative;
   float: right;
   width: auto;
+  white-space: nowrap;
   margin-right: -12px;
   font-size: 14px;
   font-weight: 200;
@@ -311,7 +315,7 @@ div.intro-title p:hover {
 .link {
   cursor: pointer;  
 }
-.link:hover, .link_u:hover, .content a:hover {
+.link:hover, .link_u:hover, .content a:hover, #shake:hover {
   border: 1px dotted #000;
   border-radius: 6px;
   animation: shaker 0.82s cubic-bezier(.36,.07,.19,.97) both;
@@ -327,7 +331,7 @@ div.intro-title p:hover {
   animation: blinker 1.1s cubic-bezier(.5, 0, 1, 1) infinite alternate;
 }
 @keyframes blinker { to { opacity: 0.1; } }
-a#shake {
+#shake {
   display:inline-block;
 }
 @keyframes shaker {
@@ -451,7 +455,9 @@ a#shake {
   border: 3px solid #000;
   border-radius: 6px;
 }
-
+.product {
+  display: inline-block;
+}
 .product p {
   margin-block: 8px;
 }
@@ -675,7 +681,7 @@ table.orders_table {
   box-shadow: 
     0px 0px 6px 1px rgba(253, 243, 185, 1)
   ;
-  
+  margin-block: 6px;
 }
 .rsw-ce {
   /* width: clamp(240px, 60vw, 800px); */

@@ -191,7 +191,7 @@ export default function Product(props) {
                 <>
                     
                     <p className="product-title">{props.prod.title}</p>
-                    <p>Price: <span>{props.prod.price.toFixed(2)} €</span></p>
+                    <p>Price: <span>{props.prod?.price.toFixed(2)} €</span></p>
                     <p>Stock: <span>{props.prod.stock>0?props.prod.stock:"Out of stock!"}</span></p>
 
                     {props.prod.stock>0 && <p>

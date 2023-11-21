@@ -107,22 +107,25 @@ export default function Products(props) {
         } */
                 
         
-        return ( 
-            <div className="product-item" key={prod.uid}>
-                <div>
-                    <span className="product-item-thumb" style={{backgroundImage: `url(${getImgUrl(prod.photos[0])})`, 
-                        backgroundRepeat:"no-repeat" }}></span>
-                </div>
-                {/* <ImageGallery items={images} showThumbnails={false} /> */}
-                <span className="product-item-title" onClick={(event) => handleShowProduct(event, prod)}>{prod.title}</span>
-                <div className="product-item-info-wrapper">
-                    
-                        <span className="product-item-price">{prod.price}€</span>
-                        <span className="product-item-stock">{prod.stock>0?prod.stock:"Out of stock!"}</span>
-                        {prod.stock>0 && <button className="btn" onClick={() => addToCart(prod.uid)}>Add to cart</button>}
+        return (
+            <div key={prod.uid}>            
+                <div className="product-item" >
+                    <div>
+                        <span className="product-item-thumb" style={{backgroundImage: `url(${getImgUrl(prod.photos[0])})`, 
+                            backgroundRepeat:"no-repeat" }}></span>
+                    </div>
+                    {/* <ImageGallery items={images} showThumbnails={false} /> */}
+                    <span className="product-item-title" onClick={(event) => handleShowProduct(event, prod)}>{prod.title}</span>
+                    <div className="product-item-info-wrapper">
+                        
+                            <span className="product-item-price">{prod.price}€</span>
+                            <span className="product-item-stock">{prod.stock>0?prod.stock:"Out of stock!"}</span>
+                            {prod.stock>0 && <button className="btn" onClick={() => addToCart(prod.uid)}>Add to cart</button>}
 
+                    </div>
                 </div>
             </div>
+
         )
     })
     function handleDeleteProduct (event, prodId) {
