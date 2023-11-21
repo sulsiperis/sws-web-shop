@@ -2,11 +2,11 @@
 //2. Change the colors
 //3. firestore connect for shop items
 //4. firestore design for pages and content
-5. content editor
+//5. content editor
 //6. move content-cart to separate component
 //7. menu toggle function
 8. fix the content+menu 100% height when low content
-9. update DB quantity only when purchase button pressed
+//9. update DB quantity only when purchase button pressed
 10. Fix the cart notifier design for small screens
 11. min/max font size in title and product description
 //12. User auth
@@ -28,7 +28,9 @@
 //29. Save/new category
 //30. Editor for product description and category page
 31. Make clicking on product's image loop through photos arr
-//32. Cart photos doesn't show
+32. Cart photos and data sometimes doesn't show
+//33. Reload products from DB after saving
+33. add to cart check stock and forbid overadding
 
 ---------------
 https://upload.wikimedia.org/wikipedia/commons/e/ee/Apples.jpg

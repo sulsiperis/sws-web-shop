@@ -109,9 +109,10 @@ export default function Products(props) {
         
         return ( 
             <div className="product-item" key={prod.uid}>
-                <span className="product-item-thumb" style={{backgroundImage: `url(${getImgUrl(prod.photos[0])})`, 
-                    backgroundRepeat:"no-repeat" }}></span>
-                
+                <div>
+                    <span className="product-item-thumb" style={{backgroundImage: `url(${getImgUrl(prod.photos[0])})`, 
+                        backgroundRepeat:"no-repeat" }}></span>
+                </div>
                 {/* <ImageGallery items={images} showThumbnails={false} /> */}
                 <span className="product-item-title" onClick={(event) => handleShowProduct(event, prod)}>{prod.title}</span>
                 <div className="product-item-info-wrapper">

@@ -270,7 +270,7 @@ export default function Content(props) {
                 total = total + (await findDbPrice(cartContent[i].itemId) * cartContent[i].quantity)
             }
         }
-        //toFixed(2) rounds a number and returns 2 digis after dot
+        //toFixed(2) rounds a number and returns a string with 2 decimals numbers
         setCartTotals({"cartTotal": total.toFixed(2), "cartItems": count})
     }
 
@@ -504,15 +504,27 @@ export default function Content(props) {
                         await updateDoc(pageRef, { 
                             title: prodFormData.title, 
                             description: prodFormData.description, 
-                            price: Number(prodFormData.price).toFixed(2),
+                            price: parseFloat(parseFloat(prodFormData.price).toFixed(2)),
                             stock: parseInt(prodFormData.stock, 10),
                             photos: prodFormData.photos
                         })
                     }
                     //need to trigger pagesRaw state update after save
 
-                    updateDb().then((err) => err?alert("Content NOT changed. Error: " + err):alert("Content successfully changed!"))
+                    updateDb().then((err) => {
+                        if(err) {
+                            alert("Content NOT changed. Error: " + err)
+                        } else {
+                            alert("Content successfully changed!")
+                            setReloadProds(true)
+                            //close product preview
+                            handleSetShowProducts()
+                        }
+                        
+                    })
                    // .then(triggerReloadPages())
+                } else {
+                    alert('Product title, price and stock are mandatory!')
                 }
                 //new product
             } else {                
@@ -520,7 +532,7 @@ export default function Content(props) {
                 const newProdArr = {
                     title: prodFormData.title,
                     description: prodFormData.description,
-                    price: Number(prodFormData.price).toFixed(2),
+                    price: parseFloat(parseFloat(prodFormData.price).toFixed(2)),
                     stock: parseInt(prodFormData.stock, 10),
                     photos: prodFormData.photos,
                     date_added: new Date(),
@@ -559,7 +571,7 @@ export default function Content(props) {
             uid: tempId,    
             title: "!new_product",
             description: "",
-            price: Number(0).toFixed(2),
+            price: parseFloat((0).toFixed(2)),
             stock: parseInt(0, 10),
             photos: [],
             date_added: new Date(),
@@ -697,7 +709,8 @@ export default function Content(props) {
                                                 prod={allProducts} 
                                                 login={login}
                                                 pageChange={pageChange}
-                                                updateCart={updateCartContent} 
+                                                updateCart={updateCartContent}
+                                                loginCheck={loginCheck}
                                             />}
                         {curPageType===23 && login && uInfo && <UserSettings 
                                                                     user={uInfo}

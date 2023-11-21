@@ -136,13 +136,19 @@ export default function UserSettings(props) {
                 const querySnapshot = await getDocs(q)
                 if (querySnapshot.docs.length>0) {
                     
-                    querySnapshot.forEach((d) => {
+                    const proceedDeletion = async() => await querySnapshot.forEach((d) => {
                         const docRef = doc(db, "sws-orders", d.id)
                         const dd = async() => {
                             await deleteDoc(docRef)
                         }
-                        dd()
-                        msg && alert("Orders data erased successfully.")
+                        dd()                        
+                    })
+                    proceedDeletion().then((res) => {
+                        if(res) {
+                            msg?alert("Error. Orders not deleted!"):console.log("Error. Orders not deleted!")
+                        } else {
+                            msg && alert("Orders data erased successfully.")
+                        }
                     })
                 } else {
                     msg && alert("No orders to delete.")

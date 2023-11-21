@@ -11,7 +11,7 @@ export default function Product(props) {
         title: props.prod?.title,
         description: props.prod?.description,
         photos: ["", "", "", "", "", ""],
-        price: Number(props.prod?.price).toFixed(2),
+        price: parseFloat(parseFloat(props.prod?.price).toFixed(2)),
         stock: props.prod?.stock
         //category_id: null
         //date_added: null
@@ -127,9 +127,9 @@ export default function Product(props) {
     }
     function handleChange(event) {
        // console.log(formData)
-
-        const name = event.target.name
+        const name = event.target.name        
         setFormData((ov) => {
+            //updating array of photos
             if (name.startsWith("photo_")) {                
                 let nArr2 = ["", "", "", "", "", ""] 
                 nArr2 = [...ov.photos]
@@ -137,9 +137,7 @@ export default function Product(props) {
                 return(
                     {...ov, photos: nArr2}
                 )
-
-            } else {
-            //const name = event.target.name.startsWith("photo_")?photos[Number(charAt(6))]:event.target.name
+            } else {            
                 return(
                     {...ov, [name]: event.target.value}
                 )
@@ -193,7 +191,7 @@ export default function Product(props) {
                 <>
                     
                     <p className="product-title">{props.prod.title}</p>
-                    <p>Price: <span>{Number(props.prod.price).toFixed(2)} €</span></p>
+                    <p>Price: <span>{props.prod.price.toFixed(2)} €</span></p>
                     <p>Stock: <span>{props.prod.stock>0?props.prod.stock:"Out of stock!"}</span></p>
 
                     {props.prod.stock>0 && <p>
