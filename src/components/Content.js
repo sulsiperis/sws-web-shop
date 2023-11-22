@@ -667,6 +667,13 @@ export default function Content(props) {
 
     return (
         <div className="main-wrapper">
+                    <Header 
+                        changeIntro={props.changeIntro}
+                        menuShowHide={menuShowHide}
+                        login={loginCheck}
+                        contacts={contactsPage}
+                        loggedInName={uInfo?.name}
+                    />
             <div className="main">
                 {toggleMenu && <Menu                    
                     products={productsItems}
@@ -678,14 +685,7 @@ export default function Content(props) {
                     user={uInfo}
                     addNewPage={addNewPage}
                 />}
-                <div className="g1">
-                    <Header 
-                        changeIntro={props.changeIntro}
-                        menuShowHide={menuShowHide}
-                        login={loginCheck}
-                        contacts={contactsPage}
-                        loggedInName={uInfo?.name}
-                    />  
+                  
                     
                              
                     <div className={showCart?"content padding-top-80":"content"} >
@@ -694,7 +694,7 @@ export default function Content(props) {
                                         cartDetails={cartTotals} 
                                         cartPage={cartPage} 
                                     />}   
-                        <div className="content-title"><span onDoubleClick={triggerReloadPages}>{ContentTitle()}</span></div> 
+                        <span className="content-title"><span onDoubleClick={triggerReloadPages}>{ContentTitle()}</span></span> 
                         {/* test */}
                         {/* <button onClick={findMaxCatId}>cat</button> */} 
                         
@@ -755,9 +755,9 @@ export default function Content(props) {
 
                         />}
                     </div>
-                </div>
-            </div>
-            <Footer />
+                </div><Footer />
+
+            
         </div>
     )
     

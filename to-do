@@ -28,11 +28,20 @@
 //29. Save/new category
 //30. Editor for product description and category page
 31. Make clicking on product's image loop through photos arr
-32. Cart photos and data sometimes doesn't show
+32. Cart photos and data sometimes doesn't show (when logged in especially)
 //33. Reload products from DB after saving
 33. add to cart check stock and forbid overadding
 34. contact form
 35. select first child option
+36. cart notifier still has bug on brave browser and with some products in all browsers
+37. product preview image loading icon before showing image
+-------android-----
+38. use images instead symbols for menu and header btns
+39. grid flex totally scrambled
+40. Product preview image width should be smaller
+41. cart font-size dynamic
+42. remake w/ bootstrap
+
 ---------------
 https://upload.wikimedia.org/wikipedia/commons/e/ee/Apples.jpg
 https://1.bp.blogspot.com/-sm2PC8KW-l4/UDP7Z4Mz80I/AAAAAAAAB6g/j91oeuESMcs/s1600/apple.jpg

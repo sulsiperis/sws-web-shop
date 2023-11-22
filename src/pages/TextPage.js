@@ -59,7 +59,7 @@ export default function TextPage(props) {
             </form>
         </div>
         :
-        <div>            
+        <div className="txt-content">            
             {nArr && getJsxFromStr(nArr[0]?.content)}
         </div>
     )

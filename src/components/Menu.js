@@ -28,7 +28,7 @@ export default function Menu(props) {
                 <p                
                 onClick={() => props.selectPage(page.uid)}
                 className={props.currentPage===page.uid?"selected":"" }
-                >{page.title}{hasChildren && " ⯆"}</p>
+                >{page.title}{hasChildren && <span className="triangle-css"></span>}</p>
                 {(props.user?.level===1) && 
                     ((page.type_id === 100) || (page.type_id === 200)) && 
                     <span className="add indent-left txt-green" onClick={() => props.addNewPage(page.uid)} >+</span> }

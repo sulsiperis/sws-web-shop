@@ -154,7 +154,6 @@ export default function LoginSignup(props) {
 
     return (
         <div className="login">
-            
             <form name="loginForm" className="login" onSubmit={handleLoginSubmit} > 
                 <div className="login-wrapper">
                     <input type="email" className="input" name="email" placeholder="Email" required value={loginData.email} onChange={handleChangeLogin} />

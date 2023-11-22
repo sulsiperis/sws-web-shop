@@ -199,9 +199,13 @@ export default function Products(props) {
                 </div>
             </>
 
-            :<div className="products">                
-                {getJsxFromStr(nArr[0]?.content)}
-                {prodItems}                
+            :<div className="products">
+                <div className="products-content">
+                    {getJsxFromStr(nArr[0]?.content)}
+                </div>
+                <div className="products-items">
+                    {prodItems}
+                </div>                
             </div> 
     )
 }

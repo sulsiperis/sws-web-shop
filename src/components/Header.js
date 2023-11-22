@@ -6,8 +6,10 @@ export default function Header(props) {
            <div className="header-title">Simple Web Shop</div>
            <div className="header-buttons-wrapper-col"> 
                 <div className="header-buttons-wrapper-row">
-                    <span className="header-email" onClick={props.contacts}>🕊</span>
-                    <span className="header-user" onClick={props.login}>웃</span>
+                    <span className="far fa-envelope header-eml" onClick={props.contacts}></span>
+                    <span className="far fa-user header-usr" onClick={props.login}></span>
+
+                    
                 </div>
                 
                 { props.login && props.loggedInName && 
