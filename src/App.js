@@ -31,7 +31,8 @@ function App() {
       })
   }
   return (
-    <main>
+    <>
+      
       { 
         intro?<Intro 
                 showIntro={intro} 
@@ -43,7 +44,7 @@ function App() {
                     
               /> 
       }      
-    </main>
+    </>
   );
 }
 

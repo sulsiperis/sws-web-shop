@@ -23,6 +23,6 @@ export function getImgUrl(url) {
     }
 }
 export function getJsxFromStr(str) {
-    const sanitizedContent = DOMPurify.sanitize(str)
+    const sanitizedContent = DOMPurify.sanitize(str, {ADD_ATTR: ['target']})
     return <div dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
 }

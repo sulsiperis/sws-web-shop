@@ -666,98 +666,97 @@ export default function Content(props) {
    // console.log("pages raw: ", pagesRaw)
 
     return (
-        <div className="main-wrapper">
-                    <Header 
-                        changeIntro={props.changeIntro}
-                        menuShowHide={menuShowHide}
-                        login={loginCheck}
-                        contacts={contactsPage}
-                        loggedInName={uInfo?.name}
-                    />
-            <div className="main">
-                {toggleMenu && <Menu                    
-                    products={productsItems}
-                    currentCat={currentCat}
-                    currentPage={currentPage}
-                    selectPage={pageChange}
-                    pages={pages}
-                    getChildren={getChildren}
-                    user={uInfo}
-                    addNewPage={addNewPage}
-                />}
-                  
+        <div className="main-wrapper">            
+            <Header 
+                changeIntro={props.changeIntro}
+                menuShowHide={menuShowHide}
+                login={loginCheck}
+                contacts={contactsPage}
+                loggedInName={uInfo?.name}
+            />
+            {toggleMenu && <Menu                    
+                products={productsItems}
+                currentCat={currentCat}
+                currentPage={currentPage}
+                selectPage={pageChange}
+                pages={pages}
+                getChildren={getChildren}
+                user={uInfo}
+                addNewPage={addNewPage}
+            />}
+                
+                
+            <div className="content-wrapper">    
+
+                <div className={showCart?"content padding-top-80":"content"} >
+                {showCart && <ContentCart 
+                                    updateCart={updateCartContent} 
+                                    cartDetails={cartTotals} 
+                                    cartPage={cartPage} 
+                                />}   
+                    <span className="content-title"><span onDoubleClick={triggerReloadPages}>{ContentTitle()}</span></span> 
+                    {/* test */}
+                    {/* <button onClick={findMaxCatId}>cat</button> */} 
                     
-                             
-                    <div className={showCart?"content padding-top-80":"content"} >
-                    {showCart && <ContentCart 
-                                        updateCart={updateCartContent} 
-                                        cartDetails={cartTotals} 
-                                        cartPage={cartPage} 
-                                    />}   
-                        <span className="content-title"><span onDoubleClick={triggerReloadPages}>{ContentTitle()}</span></span> 
-                        {/* test */}
-                        {/* <button onClick={findMaxCatId}>cat</button> */} 
-                        
-                        
-                        {curPageType===999999 && <LoginSignup 
-                                                    handleLogin={handleLogin} 
-                                                    handleCookie={handleCookie} 
-                                                    users={users} 
-                                                />}
-                        {((curPageType===100) || (curPageType===1) )&& <TextPage 
-                                                    pages={pages} 
-                                                    id={currentPage} 
-                                                    user={uInfo} 
-                                                    triggerReloadPages={triggerReloadPages}
-                                                    pageChange={pageChange}
-                                                    getPagesOfType={getPagesOfType}
-                                                    handleSubmit={savePage}
-                                                    handleDeletePage={deletePage}
-                                                    curPageType={curPageType}
-                                                />}
-                        {curPageType===21 && login && uInfo && <UserInfo 
-                                                                    user={uInfo} 
-                                                                    handleLogout={handleLogout} 
-                                                                    prod={allProducts}                                                                    
-                                                                />}
-                        {curPageType===22 && <Cart 
-                                                user={uInfo} 
-                                                prod={allProducts} 
-                                                login={login}
-                                                pageChange={pageChange}
-                                                updateCart={updateCartContent}
-                                                loginCheck={loginCheck}
+                    
+                    {curPageType===999999 && <LoginSignup 
+                                                handleLogin={handleLogin} 
+                                                handleCookie={handleCookie} 
+                                                users={users} 
                                             />}
-                        {curPageType===23 && login && uInfo && <UserSettings 
-                                                                    user={uInfo}
-                                                                    users={users} 
-                                                                    handleLogout={handleLogout} 
-                                                                    updateName={updateName} 
-                                                                    updateTheme={updateTheme}
-                                                                    updateDelUsers={updateDelUsers}
-                                                                />}
-                        {curPageType===200 && <Products 
-                            items={productsItems} 
-                            updateCart={updateCartContent} 
-                            currentPage={currentPage}
-                            currentCat={currentCat}
-                            showProduct={showProduct}
-                            //setShowProduct={(prodObj) => setShowProduct(prodObj)}
-                            setShowProduct={handleSetShowProducts}
-                            pages={pages}
-                            triggerReloadPages={triggerReloadPages}
-                            triggerReloadProds={() => setReloadProds(true)}
-                            user={uInfo}
-                            handleSaveProduct={handleSaveProduct}
-                            handleNewProduct={handleNewProduct}
-                            handleSubmit={savePage}
-                            handleDeletePage={deletePage}
+                    {((curPageType===100) || (curPageType===1) )&& <TextPage 
+                                                pages={pages} 
+                                                id={currentPage} 
+                                                user={uInfo} 
+                                                triggerReloadPages={triggerReloadPages}
+                                                pageChange={pageChange}
+                                                getPagesOfType={getPagesOfType}
+                                                handleSubmit={savePage}
+                                                handleDeletePage={deletePage}
+                                                curPageType={curPageType}
+                                            />}
+                    {curPageType===21 && login && uInfo && <UserInfo 
+                                                                user={uInfo} 
+                                                                handleLogout={handleLogout} 
+                                                                prod={allProducts}                                                                    
+                                                            />}
+                    {curPageType===22 && <Cart 
+                                            user={uInfo} 
+                                            prod={allProducts} 
+                                            login={login}
+                                            pageChange={pageChange}
+                                            updateCart={updateCartContent}
+                                            loginCheck={loginCheck}
+                                        />}
+                    {curPageType===23 && login && uInfo && <UserSettings 
+                                                                user={uInfo}
+                                                                users={users} 
+                                                                handleLogout={handleLogout} 
+                                                                updateName={updateName} 
+                                                                updateTheme={updateTheme}
+                                                                updateDelUsers={updateDelUsers}
+                                                            />}
+                    {curPageType===200 && <Products 
+                        items={productsItems} 
+                        updateCart={updateCartContent} 
+                        currentPage={currentPage}
+                        currentCat={currentCat}
+                        showProduct={showProduct}
+                        //setShowProduct={(prodObj) => setShowProduct(prodObj)}
+                        setShowProduct={handleSetShowProducts}
+                        pages={pages}
+                        triggerReloadPages={triggerReloadPages}
+                        triggerReloadProds={() => setReloadProds(true)}
+                        user={uInfo}
+                        handleSaveProduct={handleSaveProduct}
+                        handleNewProduct={handleNewProduct}
+                        handleSubmit={savePage}
+                        handleDeletePage={deletePage}
+                    />}
+                        </div>
+            </div>
+            <Footer />
 
-                        />}
-                    </div>
-                </div><Footer />
-
-            
         </div>
     )
     

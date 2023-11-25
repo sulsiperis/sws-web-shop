@@ -41,6 +41,8 @@
 40. Product preview image width should be smaller
 41. cart font-size dynamic
 42. remake w/ bootstrap
+43. after login check if it was successful because sometimes it just sets login to true but no user data retrieved from db
+44. height 100% on mobile bug
 
 ---------------
 https://upload.wikimedia.org/wikipedia/commons/e/ee/Apples.jpg
