@@ -75,6 +75,11 @@ export default function Content(props) {
         getProds()
     }, [])
 
+    //hide menu for small screens
+    React.useEffect(() => {
+        window.innerWidth < 600 && setToggleMenu(false)
+    }, [])
+
     //hook for redirrectin to first gallery page
     React.useEffect(() => {
         !currentPage && goToPage(false, 1)
