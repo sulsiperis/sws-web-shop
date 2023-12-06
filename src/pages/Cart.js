@@ -90,15 +90,20 @@ export default function Cart(props) {
             if (!res)  {
                 alert("Order created successfully.")        
                 setPostPurchase(true)
-                emptyCart()
+                emptyCart(false)
             } else {
                 alert("Error adding order data to db!")
             }
         })
     }
 
-    function emptyCart() {
-        if (window.confirm("Are you sure you want to remove all items from the cart?")) {
+    function emptyCart(msg=true) {
+        if (msg) {
+            if (window.confirm("Are you sure you want to remove all items from the cart?")) {
+                localStorage.clear()
+                props.updateCart(null)
+            }
+        } else {
             localStorage.clear()
             props.updateCart(null)
         }
